@@ -1,31 +1,101 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\CtdtController;
+use App\Http\Controllers\CtdtApprovalController;
+use App\Http\Controllers\CtdtItemController;
+use App\Http\Controllers\HocPhanController;
+use App\Http\Controllers\KhoaController;
+use App\Http\Controllers\BoMonController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\HeDaoTaoController;
+use App\Http\Controllers\NganhController;
+use App\Http\Controllers\NienKhoaController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ChuyenNganhController;
+use App\Http\Controllers\KhoaHocController;
+use App\Http\Controllers\KhoiKienThucController;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
+// Redirect root to dashboard
+Route::redirect('/', '/dashboard');
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
+// Authenticated routes
 Route::middleware('auth')->group(function () {
+    // Profile routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+
+    // Dashboard
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    // CTDT CRUD routes
+    Route::resource('ctdt', CtdtController::class);
+    Route::post('/ctdt/{ctdt}/clone', [CtdtController::class, 'clone'])->name('ctdt.clone');
+    Route::post('/ctdt/{ctdt}/send-for-approval', [CtdtController::class, 'sendForApproval'])
+        ->name('ctdt.send-for-approval');
+
+    // CTDT Approval routes (Admin only)
+    Route::middleware('role:admin')->prefix('ctdt-approval')->name('ctdt-approval.')->group(function () {
+        Route::get('/pending', [CtdtApprovalController::class, 'pending'])->name('pending');
+        Route::post('/{ctdt}/approve', [CtdtApprovalController::class, 'approve'])->name('approve');
+        Route::post('/{ctdt}/publish', [CtdtApprovalController::class, 'publish'])->name('publish');
+        Route::post('/{ctdt}/reject', [CtdtApprovalController::class, 'reject'])->name('reject');
+    });
+
+    // CTDT Items routes (add/remove học phần, update order)
+    Route::prefix('ctdt/{ctdt}')->name('ctdt-item.')->group(function () {
+        Route::post('/add-hoc-phan', [CtdtItemController::class, 'addHocPhan'])->name('add-hoc-phan');
+        Route::delete('/hoc-phan/{hocPhan}', [CtdtItemController::class, 'removeHocPhan'])->name('remove-hoc-phan');
+        Route::post('/update-order', [CtdtItemController::class, 'updateOrder'])->name('update-order');
+    });
+
+    // Học phần routes (all roles)
+    Route::resource('hoc-phan', HocPhanController::class);
+
+    // Admin only routes
+    Route::middleware('role:admin')->group(function () {
+        Route::resource('khoa', KhoaController::class);
+        Route::resource('bo-mon', BoMonController::class);
+        Route::resource('users', UserController::class);
+        Route::resource('he-dao-tao', HeDaoTaoController::class);
+        Route::resource('nganh', NganhController::class);
+        Route::resource('nien-khoa', NienKhoaController::class);
+        Route::resource('chuyen-nganh', ChuyenNganhController::class);
+        Route::resource('khoa-hoc', KhoaHocController::class);
+        Route::resource('khoi-kien-thuc', KhoiKienThucController::class);
+    });
 });
 
-require __DIR__.'/auth.php';
+// Public routes for viewing published CTDT (no auth required)
+Route::get('/ctdt-public', function () {
+    $ctdts = \App\Models\ChuongTrinhDaoTao::where('trang_thai', 'published')
+        ->with(['khoa', 'nganh', 'heDaoTao'])
+        ->orderBy('updated_at', 'desc')
+        ->paginate(15);
+
+    return view('ctdt.public-index', compact('ctdts'));
+})->name('ctdt-public.index');
+
+// Public route for viewing published CTDT
+Route::get('/ctdt/public/{ctdt}', function ($id) {
+    $ctdt = \App\Models\ChuongTrinhDaoTao::findOrFail($id);
+
+    if ($ctdt->trang_thai !== 'published') {
+        abort(403, 'CTĐT này chưa được công bố');
+    }
+
+    $ctdt->load([
+        'khoi' => function ($query) {
+            $query->orderBy('thu_tu');
+        },
+        'hocPhans' => function ($query) {
+            $query->orderBy('ctdt_hoc_phan.thu_tu');
+        }
+    ]);
+
+    return view('ctdt.public', compact('ctdt'));
+})->name('ctdt-public.show');
+
+// Include Breeze auth routes (keep existing Tailwind auth)
+require __DIR__ . '/auth.php';
