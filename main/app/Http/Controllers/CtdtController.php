@@ -25,7 +25,7 @@ class CtdtController extends Controller
             $query->where('khoa_id', $user->khoa_id);
         }
 
-        $ctdts = $query->with(['khoa', 'nganh', 'chuyenNganh', 'heDaoTao', 'nienKhoa', 'creator'])
+        $ctdts = $query->with(['khoa', 'nganh', 'chuyenNganh', 'heDaoTao', 'nienKhoa', 'nguoiTao'])
             ->paginate(15);
 
         return view('ctdt.index', compact('ctdts'));
@@ -65,14 +65,16 @@ class CtdtController extends Controller
         $this->authorize('view', $ctdt);
 
         $ctdt->load([
-            'khoi' => function ($query) {
-                $query->orderBy('thu_tu');
-            },
-            'hocPhans' => function ($query) {
-                $query->orderBy('thu_tu');
-            },
-            'rangBuocs',
-            'tuongDuongs'
+            'ctdtKhois.khoiKienThuc',
+            'ctdtHocPhans.hocPhan',
+            'ctdtRangBuocs',
+            'ctdtTuongDuongs',
+            'khoa',
+            'nganh',
+            'chuyenNganh',
+            'heDaoTao',
+            'nienKhoa',
+            'nguoiTao'
         ]);
 
         return view('ctdt.show', compact('ctdt'));
@@ -130,16 +132,16 @@ class CtdtController extends Controller
         $newCtdt->save();
 
         // Clone relationships
-        foreach ($ctdt->hocPhans as $hocPhan) {
-            $newCtdt->hocPhans()->attach($hocPhan->id, [
-                'khoi_id' => $hocPhan->pivot->khoi_id,
-                'hoc_ky' => $hocPhan->pivot->hoc_ky,
-                'loai' => $hocPhan->pivot->loai,
-                'thu_tu' => $hocPhan->pivot->thu_tu,
-                'ghi_chu' => $hocPhan->pivot->ghi_chu,
+        foreach ($ctdt->ctdtHocPhans as $ctdtHocPhan) {
+            $newCtdt->ctdtHocPhans()->create([
+                'hoc_phan_id' => $ctdtHocPhan->hoc_phan_id,
+                'khoi_kien_thuc_id' => $ctdtHocPhan->khoi_kien_thuc_id,
+                'hoc_ky' => $ctdtHocPhan->hoc_ky,
+                'loai' => $ctdtHocPhan->loai,
+                'thu_tu' => $ctdtHocPhan->thu_tu,
+                'ghi_chu' => $ctdtHocPhan->ghi_chu,
             ]);
         }
-
 
         return redirect()->route('ctdt.edit', $newCtdt)->with('success', 'Sao chép CTĐT thành công');
     }

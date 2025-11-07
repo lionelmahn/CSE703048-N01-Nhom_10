@@ -74,21 +74,21 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($ctdt->hocPhans->sortBy('pivot.thu_tu') as $hocPhan)
+                        @forelse ($ctdt->ctdtHocPhans->sortBy('thu_tu') as $ctdtHocPhan)
                         <tr>
-                            <td>{{ $hocPhan->ma_hp }}</td>
-                            <td>{{ $hocPhan->ten_hp }}</td>
-                            <td>{{ $hocPhan->so_tinchi }}</td>
-                            <td>{{ $hocPhan->pivot->khoi->ten ?? 'N/A' }}</td>
+                            <td>{{ $ctdtHocPhan->hocPhan->ma_hp }}</td>
+                            <td>{{ $ctdtHocPhan->hocPhan->ten_hp }}</td>
+                            <td>{{ $ctdtHocPhan->hocPhan->so_tinchi }}</td>
+                            <td>{{ $ctdtHocPhan->khoiKienThuc->ten ?? 'N/A' }}</td>
                             <td>
-                                <span class="badge bg-{{ $hocPhan->pivot->loai === 'bat_buoc' ? 'danger' : 'warning' }}">
-                                    {{ $hocPhan->pivot->loai === 'bat_buoc' ? 'Bắt buộc' : 'Tự chọn' }}
+                                <span class="badge bg-{{ $ctdtHocPhan->loai === 'bat_buoc' ? 'danger' : 'warning' }}">
+                                    {{ $ctdtHocPhan->loai === 'bat_buoc' ? 'Bắt buộc' : 'Tự chọn' }}
                                 </span>
                             </td>
-                            <td>{{ $hocPhan->pivot->thu_tu }}</td>
+                            <td>{{ $ctdtHocPhan->thu_tu }}</td>
                             @can('update', $ctdt)
                             <td>
-                                <form method="POST" action="{{ route('ctdt-item.remove-hoc-phan', [$ctdt, $hocPhan]) }}" style="display: inline;" onsubmit="return confirm('Xóa?');">
+                                <form method="POST" action="{{ route('ctdt-item.remove-hoc-phan', [$ctdt, $ctdtHocPhan->hocPhan]) }}" style="display: inline;" onsubmit="return confirm('Xóa?');">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-sm btn-danger">
@@ -166,7 +166,7 @@
             </div>
             <div class="card-body">
                 <small class="text-muted">Tạo bởi</small>
-                <p>{{ $ctdt->creator?->name ?? 'N/A' }}</p>
+                <p>{{ $ctdt->nguoiTao?->name ?? 'N/A' }}</p>
                 
                 <small class="text-muted">Ngày tạo</small>
                 <p>{{ $ctdt->created_at->format('d/m/Y H:i') }}</p>

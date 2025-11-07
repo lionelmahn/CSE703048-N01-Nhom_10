@@ -25,8 +25,9 @@
                 <tr>
                     <td><strong>{{ $ctdt->ma_ctdt }}</strong></td>
                     <td>{{ $ctdt->ten }}</td>
-                    <td>{{ $ctdt->khoa->ten }}</td>
-                    <td>{{ $ctdt->creator->name }}</td>
+                    {{-- Access khoa directly from CTDT, not through nganh --}}
+                    <td>{{ $ctdt->khoa?->ten ?? 'N/A' }}</td>
+                    <td>{{ $ctdt->nguoiTao?->name ?? 'N/A' }}</td>
                     <td>{{ $ctdt->created_at->format('d/m/Y H:i') }}</td>
                     <td>
                         <a href="{{ route('ctdt.show', $ctdt) }}" class="btn btn-sm btn-info">
