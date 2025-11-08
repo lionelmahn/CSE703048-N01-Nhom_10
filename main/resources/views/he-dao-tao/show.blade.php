@@ -44,32 +44,40 @@
 
             <div class="card shadow-sm">
                 <div class="card-header">
-                    <h5 class="mb-0">Danh Sách Ngành ({{ $heDaoTao->nganhs->count() }})</h5>
+                    <h5 class="mb-0">Danh Sách Chương Trình Đào Tạo ({{ $heDaoTao->chuongTrinhDaoTaos->count() }})</h5>
                 </div>
                 <div class="card-body">
-                    @if($heDaoTao->nganhs->count() > 0)
+                    @if($heDaoTao->chuongTrinhDaoTaos->count() > 0)
                         <div class="table-responsive">
                             <table class="table table-sm">
                                 <thead>
                                     <tr>
-                                        <th>Mã Ngành</th>
-                                        <th>Tên Ngành</th>
-                                        <th>Khoa</th>
+                                        <th>Mã CTĐT</th>
+                                        <th>Tên CTĐT</th>
+                                        <th>Ngành</th>
+                                        <th>Trạng thái</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach($heDaoTao->nganhs as $nganh)
+                                    @foreach($heDaoTao->chuongTrinhDaoTaos as $ctdt)
                                         <tr>
-                                            <td><strong>{{ $nganh->ma }}</strong></td>
-                                            <td>{{ $nganh->ten }}</td>
-                                            <td>{{ $nganh->khoa->ten ?? 'N/A' }}</td>
+                                            <td><strong>{{ $ctdt->ma }}</strong></td>
+                                            <td>{{ $ctdt->ten }}</td>
+                                            <td>{{ $ctdt->nganh->ten ?? 'N/A' }}</td>
+                                            <td>
+                                                @if($ctdt->trang_thai == 'active')
+                                                    <span class="badge bg-success">Đang hoạt động</span>
+                                                @else
+                                                    <span class="badge bg-secondary">Ngưng hoạt động</span>
+                                                @endif
+                                            </td>
                                         </tr>
                                     @endforeach
                                 </tbody>
                             </table>
                         </div>
                     @else
-                        <p class="text-muted mb-0">Chưa có ngành nào thuộc hệ đào tạo này</p>
+                        <p class="text-muted mb-0">Chưa có chương trình đào tạo nào thuộc hệ đào tạo này</p>
                     @endif
                 </div>
             </div>
@@ -82,8 +90,8 @@
                 </div>
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <span>Tổng số ngành:</span>
-                        <span class="badge bg-primary fs-6">{{ $heDaoTao->nganhs->count() }}</span>
+                        <span>Tổng số CTĐT:</span>
+                        <span class="badge bg-primary fs-6">{{ $heDaoTao->chuongTrinhDaoTaos->count() }}</span>
                     </div>
                 </div>
             </div>

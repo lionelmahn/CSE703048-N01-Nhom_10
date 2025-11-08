@@ -61,7 +61,7 @@
                     <div class="small">
                         <p><strong>Ngày tạo:</strong> {{ $heDaoTao->created_at->format('d/m/Y H:i') }}</p>
                         <p><strong>Cập nhật:</strong> {{ $heDaoTao->updated_at->format('d/m/Y H:i') }}</p>
-                        <p><strong>Số ngành:</strong> <span class="badge bg-info">{{ $heDaoTao->nganhs->count() }}</span></p>
+                        <p><strong>Số CTĐT:</strong> <span class="badge bg-info">{{ $heDaoTao->chuongTrinhDaoTaos->count() ?? 0 }}</span></p>
                     </div>
                 </div>
             </div>

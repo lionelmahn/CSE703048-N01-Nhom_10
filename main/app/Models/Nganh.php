@@ -3,18 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Nganh extends Model
 {
     protected $table = 'nganh';
-    protected $fillable = ['ma', 'ten', 'he_dao_tao_id'];
+    protected $fillable = ['ma', 'ten'];
 
-    public function heDaoTao(): BelongsTo
-    {
-        return $this->belongsTo(HeDaoTao::class);
-    }
 
     public function chuyenNganhs(): HasMany
     {

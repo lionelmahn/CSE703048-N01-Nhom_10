@@ -6,9 +6,24 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h1 class="h3">Chương trình Đào tạo</h1>
     @can('create', App\Models\ChuongTrinhDaoTao::class)
-    <a href="{{ route('ctdt.create') }}" class="btn btn-primary">
-        <i class="fas fa-plus"></i> Tạo mới
-    </a>
+    {{-- Update button to dropdown with 2 options --}}
+    <div class="btn-group">
+        <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fas fa-plus"></i> Thêm mới
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end">
+            <li>
+                <a class="dropdown-item" href="{{ route('ctdt.create', ['mode' => 'new']) }}">
+                    <i class="fas fa-plus-circle"></i> Tạo mới hoàn toàn
+                </a>
+            </li>
+            <li>
+                <a class="dropdown-item" href="{{ route('ctdt.create', ['mode' => 'copy']) }}">
+                    <i class="fas fa-copy"></i> Sao chép CTĐT
+                </a>
+            </li>
+        </ul>
+    </div>
     @endcan
 </div>
 
@@ -20,7 +35,8 @@
                     <th>Mã CTĐT</th>
                     <th>Tên</th>
                     <th>Khoa</th>
-                    <th>Niên khóa</th>
+                    <th>Ngành</th>
+                    <th>Khóa</th>
                     <th>Trạng thái</th>
                     <th>Hiệu lực từ</th>
                     <th style="width: 150px;">Hành động</th>
@@ -31,14 +47,26 @@
                 <tr>
                     <td><strong>{{ $ctdt->ma_ctdt }}</strong></td>
                     <td>{{ $ctdt->ten }}</td>
-                    <td>{{ $ctdt->khoa->ten }}</td>
-                    <td>{{ $ctdt->nienKhoa->ma }}</td>
+                    <td>{{ $ctdt->khoa?->ten ?? 'N/A' }}</td>
+                    <td>{{ $ctdt->nganh?->ten ?? 'N/A' }}</td>
                     <td>
-                        <span class="badge-status status-{{ $ctdt->trang_thai }}">
-                            {{ ucfirst(str_replace('_', ' ', $ctdt->trang_thai)) }}
-                        </span>
+                        {{-- Display khoa hoc --}}
+                        <span class="badge bg-secondary">{{ $ctdt->khoaHoc?->ma ?? 'N/A' }}</span>
                     </td>
-                    <td>{{ $ctdt->hieu_luc_tu->format('d/m/Y') }}</td>
+                    <td>
+                        @php
+                            $statusMap = [
+                                'draft' => ['class' => 'secondary', 'text' => 'Bản nháp'],
+                                'pending' => ['class' => 'warning', 'text' => 'Chờ duyệt'],
+                                'approved' => ['class' => 'success', 'text' => 'Đã duyệt'],
+                                'published' => ['class' => 'primary', 'text' => 'Đã công bố'],
+                                'archived' => ['class' => 'dark', 'text' => 'Lưu trữ'],
+                            ];
+                            $status = $statusMap[$ctdt->trang_thai] ?? ['class' => 'secondary', 'text' => $ctdt->trang_thai];
+                        @endphp
+                        <span class="badge bg-{{ $status['class'] }}">{{ $status['text'] }}</span>
+                    </td>
+                    <td>{{ $ctdt->hieu_luc_tu?->format('d/m/Y') ?? 'N/A' }}</td>
                     <td>
                         <a href="{{ route('ctdt.show', $ctdt) }}" class="btn btn-sm btn-info" title="Xem">
                             <i class="fas fa-eye"></i>
@@ -49,7 +77,7 @@
                         </a>
                         @endcan
                         @can('delete', $ctdt)
-                        <form method="POST" action="{{ route('ctdt.destroy', $ctdt) }}" style="display: inline;" onsubmit="return confirm('Bạn chắc chắn?');">
+                        <form method="POST" action="{{ route('ctdt.destroy', $ctdt) }}" style="display: inline;" onsubmit="return confirm('Bạn chắc chắn muốn xóa CTĐT này?');">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-sm btn-danger" title="Xóa">
@@ -61,15 +89,20 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="7" class="text-center text-muted py-4">Chưa có dữ liệu</td>
+                    <td colspan="8" class="text-center text-muted py-4">
+                        <i class="fas fa-inbox fa-3x mb-3 d-block"></i>
+                        Chưa có chương trình đào tạo nào
+                    </td>
                 </tr>
                 @endforelse
             </tbody>
         </table>
     </div>
     
+    @if($ctdts->hasPages())
     <div class="card-footer bg-light">
         {{ $ctdts->links('pagination::bootstrap-5') }}
     </div>
+    @endif
 </div>
 @endsection

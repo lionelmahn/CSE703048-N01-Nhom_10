@@ -13,11 +13,14 @@ class ChuongTrinhDaoTao extends Model
     protected $fillable = [
         'ma_ctdt',
         'ten',
+        'bac_hoc_id',
+        'loai_hinh_dao_tao_id',
         'khoa_id',
         'nganh_id',
         'chuyen_nganh_id',
         'he_dao_tao_id',
         'nien_khoa_id',
+        'khoa_hoc_id',
         'trang_thai',
         'hieu_luc_tu',
         'hieu_luc_den',
@@ -31,6 +34,20 @@ class ChuongTrinhDaoTao extends Model
         'hieu_luc_den' => 'date',
     ];
 
+    public function bacHoc(): BelongsTo
+    {
+        return $this->belongsTo(BacHoc::class);
+    }
+
+    public function loaiHinhDaoTao(): BelongsTo
+    {
+        return $this->belongsTo(LoaiHinhDaoTao::class);
+    }
+
+    public function khoaHoc(): BelongsTo
+    {
+        return $this->belongsTo(KhoaHoc::class);
+    }
 
     public function khoa(): BelongsTo
     {
@@ -80,5 +97,46 @@ class ChuongTrinhDaoTao extends Model
     public function ctdtTuongDuongs(): HasMany
     {
         return $this->hasMany(CtdtTuongDuong::class, 'ctdt_id');
+    }
+
+    /**
+     * Generate CTDT code automatically
+     * Format: [BacHoc]-[LoaiHinh]-[MaNganhBo]-[MaHuongChuyenNganh]-K[Khoa]
+     * Example: DH-CQ-7480201-CNTT-K25
+     */
+    public static function generateMaCtdt($bacHocMa, $loaiHinhMa, $nganhMa, $chuyenNganhMa, $khoaHocMa): string
+    {
+        $parts = [
+            strtoupper($bacHocMa),
+            strtoupper($loaiHinhMa),
+            $nganhMa,
+            $chuyenNganhMa ? strtoupper($chuyenNganhMa) : 'DH', // Default to DH if no chuyen nganh
+            'K' . $khoaHocMa
+        ];
+
+        return implode('-', array_filter($parts));
+    }
+
+    /**
+     * Check if CTDT code is unique
+     */
+    public static function isMaCtdtUnique($maCtdt, $excludeId = null): bool
+    {
+        $query = self::where('ma_ctdt', $maCtdt);
+
+        if ($excludeId) {
+            $query->where('id', '!=', $excludeId);
+        }
+
+        return !$query->exists();
+    }
+
+    /**
+     * Validate CTDT code format
+     * Only allow uppercase letters, numbers, and dash
+     */
+    public static function isValidMaCtdtFormat($maCtdt): bool
+    {
+        return preg_match('/^[A-Z0-9\-]+$/', $maCtdt) === 1;
     }
 }

@@ -16,6 +16,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ChuyenNganhController;
 use App\Http\Controllers\KhoaHocController;
 use App\Http\Controllers\KhoiKienThucController;
+use App\Http\Controllers\BacHocController;
+use App\Http\Controllers\LoaiHinhDaoTaoController;
 
 // Redirect root to dashboard
 Route::redirect('/', '/dashboard');
@@ -31,6 +33,7 @@ Route::middleware('auth')->group(function () {
 
     // CTDT CRUD routes
     Route::resource('ctdt', CtdtController::class);
+    Route::post('/ctdt/generate-code', [CtdtController::class, 'generateCode'])->name('ctdt.generate-code');
     Route::post('/ctdt/{ctdt}/clone', [CtdtController::class, 'clone'])->name('ctdt.clone');
     Route::post('/ctdt/{ctdt}/send-for-approval', [CtdtController::class, 'sendForApproval'])
         ->name('ctdt.send-for-approval');
@@ -64,6 +67,8 @@ Route::middleware('auth')->group(function () {
         Route::resource('chuyen-nganh', ChuyenNganhController::class);
         Route::resource('khoa-hoc', KhoaHocController::class);
         Route::resource('khoi-kien-thuc', KhoiKienThucController::class);
+        Route::resource('bac-hoc', BacHocController::class);
+        Route::resource('loai-hinh-dao-tao', LoaiHinhDaoTaoController::class);
     });
 });
 

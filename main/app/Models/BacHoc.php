@@ -5,11 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class HeDaoTao extends Model
+class BacHoc extends Model
 {
-    protected $table = 'he_dao_tao';
+    protected $table = 'bac_hoc';
     protected $fillable = ['ma', 'ten'];
-
 
     public function chuongTrinhDaoTaos(): HasMany
     {

@@ -26,7 +26,8 @@
                         <tr>
                             <th>Mã</th>
                             <th>Tên Hệ Đào Tạo</th>
-                            <th>Số Ngành</th>
+                            {{-- Changed from Số Ngành to Số CTĐT --}}
+                            <th>Số CTĐT</th>
                             <th>Ngày Tạo</th>
                             <th class="text-end">Thao Tác</th>
                         </tr>
@@ -37,7 +38,8 @@
                                 <td><strong>{{ $he->ma }}</strong></td>
                                 <td>{{ $he->ten }}</td>
                                 <td>
-                                    <span class="badge bg-info">{{ $he->nganhs_count ?? $he->nganhs->count() }}</span>
+                                    {{-- Show CTDT count instead of nganhs --}}
+                                    <span class="badge bg-info">{{ $he->chuong_trinh_dao_taos_count ?? 0 }}</span>
                                 </td>
                                 <td>{{ $he->created_at->format('d/m/Y') }}</td>
                                 <td class="text-end">

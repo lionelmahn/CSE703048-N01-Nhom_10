@@ -34,22 +34,6 @@
                     <div class="form-text">Ví dụ: Công nghệ thông tin, Điện tử viễn thông</div>
                 </div>
 
-                <div class="mb-3">
-                    <label for="he_dao_tao_id" class="form-label">Hệ đào tạo <span class="text-danger">*</span></label>
-                    <select class="form-select @error('he_dao_tao_id') is-invalid @enderror" 
-                            id="he_dao_tao_id" name="he_dao_tao_id" required>
-                        <option value="">-- Chọn hệ đào tạo --</option>
-                        @foreach($heDaoTaos as $heDaoTao)
-                            <option value="{{ $heDaoTao->id }}" {{ old('he_dao_tao_id') == $heDaoTao->id ? 'selected' : '' }}>
-                                {{ $heDaoTao->ten }}
-                            </option>
-                        @endforeach
-                    </select>
-                    @error('he_dao_tao_id')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
-
                 <div class="d-flex gap-2">
                     <button type="submit" class="btn btn-primary">
                         <i class="bi bi-check-circle"></i> Lưu

@@ -7,7 +7,7 @@
     <div class="d-flex justify-content-between align-items-start">
         <div>
             <h1 class="h3">{{ $ctdt->ten }}</h1>
-            <p class="text-muted">Mã: {{ $ctdt->ma_ctdt }} | Khoa: {{ $ctdt->khoa->ten }}</p>
+            <p class="text-muted">Mã: {{ $ctdt->ma_ctdt }}</p>
         </div>
         <div>
             <span class="badge-status status-{{ $ctdt->trang_thai }} mb-2 d-block">
@@ -25,13 +25,43 @@
             </div>
             <div class="card-body">
                 <div class="row">
+                    <!-- Added Bac Hoc display -->
+                    <div class="col-md-6 mb-3">
+                        <small class="text-muted">Bậc học</small>
+                        <p>{{ $ctdt->bacHoc->ten ?? 'N/A' }}</p>
+                    </div>
+                    <!-- Added Loai Hinh Dao Tao display -->
+                    <div class="col-md-6 mb-3">
+                        <small class="text-muted">Loại hình đào tạo</small>
+                        <p>{{ $ctdt->loaiHinhDaoTao->ten ?? 'N/A' }}</p>
+                    </div>
+                    <!-- Added Khoa display -->
+                    <div class="col-md-6 mb-3">
+                        <small class="text-muted">Khoa</small>
+                        <p>{{ $ctdt->khoa->ten ?? 'N/A' }}</p>
+                    </div>
+                    <!-- Added Nganh display -->
+                    <div class="col-md-6 mb-3">
+                        <small class="text-muted">Ngành</small>
+                        <p>{{ $ctdt->nganh->ten ?? 'N/A' }} ({{ $ctdt->nganh->ma ?? '' }})</p>
+                    </div>
+                    <!-- Added Chuyen Nganh display -->
+                    <div class="col-md-6 mb-3">
+                        <small class="text-muted">Chuyên ngành</small>
+                        <p>{{ $ctdt->chuyenNganh?->ten ?? 'Đại trà' }}</p>
+                    </div>
                     <div class="col-md-6 mb-3">
                         <small class="text-muted">Hệ đào tạo</small>
                         <p>{{ $ctdt->heDaoTao->ten }}</p>
                     </div>
+                    <!-- Added Khoa Hoc display -->
+                    <div class="col-md-6 mb-3">
+                        <small class="text-muted">Khóa học</small>
+                        <p>{{ $ctdt->khoaHoc->ma ?? 'N/A' }}</p>
+                    </div>
                     <div class="col-md-6 mb-3">
                         <small class="text-muted">Niên khóa</small>
-                        <p>{{ $ctdt->nienKhoa->ma }}</p>
+                        <p>{{ $ctdt->nienKhoa->ma }} ({{ $ctdt->nienKhoa->nam_bat_dau }}-{{ $ctdt->nienKhoa->nam_ket_thuc }})</p>
                     </div>
                     <div class="col-md-6 mb-3">
                         <small class="text-muted">Hiệu lực từ</small>
@@ -178,7 +208,6 @@
     </div>
 </div>
 
-<!-- Add Hoc Phan Modal -->
 @can('update', $ctdt)
 <div class="modal fade" id="addHocPhanModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
@@ -194,7 +223,6 @@
                         <label for="hoc_phan_id" class="form-label">Học phần <span class="text-danger">*</span></label>
                         <select class="form-select" id="hoc_phan_id" name="hoc_phan_id" required>
                             <option value="">-- Chọn học phần --</option>
-                            {{-- Load from AJAX or static --}}
                         </select>
                     </div>
                     <div class="mb-3">

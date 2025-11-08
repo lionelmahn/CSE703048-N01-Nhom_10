@@ -3,24 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $ctdt->ten_ctdt }} - Chi tiết CTĐT</title>
+    <title>{{ $ctdt->ten }} - Chi tiết CTĐT</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body {
-            background-color: #f8f9fa;
-        }
-        .navbar {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .info-card {
-            border: none;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        }
-        .table-hover tbody tr:hover {
-            background-color: #f1f5f9;
-        }
+        body { background-color: #f8f9fa; }
+        .navbar { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .info-card { border: none; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+        .table-hover tbody tr:hover { background-color: #f1f5f9; }
     </style>
 </head>
 <body>
@@ -47,25 +37,44 @@
             <div class="card-body">
                 <h2 class="card-title mb-3">
                     <i class="fas fa-graduation-cap text-primary me-2"></i>
-                    {{ $ctdt->ten_ctdt }}
+                    {{ $ctdt->ten }}
                 </h2>
                 
                 <div class="row">
+                    <!-- Updated to use new relationships -->
+                    <div class="col-md-6 mb-3">
+                        <strong><i class="fas fa-graduation-cap me-2"></i>Bậc học:</strong>
+                        {{ $ctdt->bacHoc->ten ?? 'N/A' }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <strong><i class="fas fa-shapes me-2"></i>Loại hình:</strong>
+                        {{ $ctdt->loaiHinhDaoTao->ten ?? 'N/A' }}
+                    </div>
                     <div class="col-md-6 mb-3">
                         <strong><i class="fas fa-university me-2"></i>Khoa:</strong>
-                        {{ $ctdt->khoa->ten_khoa }}
+                        {{ $ctdt->khoa->ten ?? 'N/A' }}
                     </div>
                     <div class="col-md-6 mb-3">
                         <strong><i class="fas fa-book me-2"></i>Ngành:</strong>
-                        {{ $ctdt->nganh->ten_nganh }}
+                        {{ $ctdt->nganh->ten ?? 'N/A' }} ({{ $ctdt->nganh->ma ?? '' }})
                     </div>
+                    @if($ctdt->chuyenNganh)
+                    <div class="col-md-6 mb-3">
+                        <strong><i class="fas fa-tags me-2"></i>Chuyên ngành:</strong>
+                        {{ $ctdt->chuyenNganh->ten }} ({{ $ctdt->chuyenNganh->ma }})
+                    </div>
+                    @endif
                     <div class="col-md-6 mb-3">
                         <strong><i class="fas fa-layer-group me-2"></i>Hệ đào tạo:</strong>
-                        {{ $ctdt->heDaoTao->ten_he }}
+                        {{ $ctdt->heDaoTao->ten ?? 'N/A' }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <strong><i class="fas fa-users me-2"></i>Khóa học:</strong>
+                        {{ $ctdt->khoaHoc->ma ?? 'N/A' }}
                     </div>
                     <div class="col-md-6 mb-3">
                         <strong><i class="fas fa-calendar me-2"></i>Niên khóa:</strong>
-                        {{ $ctdt->nienKhoa->nam_bat_dau }} - {{ $ctdt->nienKhoa->nam_ket_thuc }}
+                        {{ $ctdt->nienKhoa->ma ?? 'N/A' }} ({{ $ctdt->nienKhoa->nam_bat_dau ?? '' }}-{{ $ctdt->nienKhoa->nam_ket_thuc ?? '' }})
                     </div>
                 </div>
 
@@ -86,7 +95,7 @@
                 </h5>
             </div>
             <div class="card-body">
-                @if($ctdt->hocPhans->isEmpty())
+                @if($ctdt->ctdtHocPhans->isEmpty())
                     <div class="alert alert-info mb-0">
                         <i class="fas fa-info-circle me-2"></i>
                         Chưa có học phần nào trong chương trình đào tạo này.
@@ -105,15 +114,15 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($ctdt->hocPhans as $index => $hocPhan)
+                                @foreach($ctdt->ctdtHocPhans->sortBy('thu_tu') as $index => $ctdtHocPhan)
                                     <tr>
                                         <td>{{ $index + 1 }}</td>
-                                        <td><strong>{{ $hocPhan->ma_hoc_phan }}</strong></td>
-                                        <td>{{ $hocPhan->ten_hoc_phan }}</td>
-                                        <td>{{ $hocPhan->so_tin_chi }}</td>
-                                        <td>{{ $hocPhan->khoiKienThuc->ten_khoi ?? 'N/A' }}</td>
+                                        <td><strong>{{ $ctdtHocPhan->hocPhan->ma_hp }}</strong></td>
+                                        <td>{{ $ctdtHocPhan->hocPhan->ten_hp }}</td>
+                                        <td>{{ $ctdtHocPhan->hocPhan->so_tinchi }}</td>
+                                        <td>{{ $ctdtHocPhan->khoiKienThuc->ten ?? 'N/A' }}</td>
                                         <td>
-                                            @if($hocPhan->loai_hoc_phan === 'bat_buoc')
+                                            @if($ctdtHocPhan->loai === 'bat_buoc')
                                                 <span class="badge bg-danger">Bắt buộc</span>
                                             @else
                                                 <span class="badge bg-info">Tự chọn</span>
@@ -126,7 +135,7 @@
                     </div>
                     
                     <div class="mt-3">
-                        <strong>Tổng số tín chỉ:</strong> {{ $ctdt->hocPhans->sum('so_tin_chi') }}
+                        <strong>Tổng số tín chỉ:</strong> {{ $ctdt->ctdtHocPhans->sum(fn($item) => $item->hocPhan->so_tinchi) }}
                     </div>
                 @endif
             </div>

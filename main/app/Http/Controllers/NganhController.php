@@ -3,21 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Models\Nganh;
-use App\Models\HeDaoTao;
 use Illuminate\Http\Request;
 
 class NganhController extends Controller
 {
     public function index()
     {
-        $nganhs = Nganh::with(['heDaoTao', 'chuongTrinhDaoTaos'])->paginate(20);
+        $nganhs = Nganh::with(['chuongTrinhDaoTaos'])->paginate(20);
         return view('nganh.index', compact('nganhs'));
     }
 
     public function create()
     {
-        $heDaoTaos = HeDaoTao::all();
-        return view('nganh.create', compact('heDaoTaos'));
+        return view('nganh.create');
     }
 
     public function store(Request $request)
@@ -25,7 +23,6 @@ class NganhController extends Controller
         $validated = $request->validate([
             'ma' => 'required|string|unique:nganh|max:50',
             'ten' => 'required|string|max:255',
-            'he_dao_tao_id' => 'required|exists:he_dao_tao,id',
         ]);
 
         $nganh = Nganh::create($validated);
@@ -36,14 +33,13 @@ class NganhController extends Controller
 
     public function show(Nganh $nganh)
     {
-        $nganh->load(['heDaoTao', 'chuongTrinhDaoTaos']);
+        $nganh->load(['chuongTrinhDaoTaos']);
         return view('nganh.show', compact('nganh'));
     }
 
     public function edit(Nganh $nganh)
     {
-        $heDaoTaos = HeDaoTao::all();
-        return view('nganh.edit', compact('nganh', 'heDaoTaos'));
+        return view('nganh.edit', compact('nganh'));
     }
 
     public function update(Request $request, Nganh $nganh)
@@ -51,7 +47,6 @@ class NganhController extends Controller
         $validated = $request->validate([
             'ma' => 'required|string|max:50|unique:nganh,ma,' . $nganh->id,
             'ten' => 'required|string|max:255',
-            'he_dao_tao_id' => 'required|exists:he_dao_tao,id',
         ]);
 
         $nganh->update($validated);

@@ -15,7 +15,8 @@
                     
                     <div class="mb-3">
                         <label for="ma_ctdt" class="form-label">Mã CTĐT <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control @error('ma_ctdt') is-invalid @enderror" id="ma_ctdt" name="ma_ctdt" value="{{ old('ma_ctdt', $ctdt->ma_ctdt) }}" required>
+                        <input type="text" class="form-control @error('ma_ctdt') is-invalid @enderror" id="ma_ctdt" name="ma_ctdt" value="{{ old('ma_ctdt', $ctdt->ma_ctdt) }}" readonly>
+                        <small class="text-muted">Mã CTĐT được tạo tự động và không thể thay đổi</small>
                         @error('ma_ctdt')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     </div>
                     
@@ -23,6 +24,30 @@
                         <label for="ten" class="form-label">Tên CTĐT <span class="text-danger">*</span></label>
                         <input type="text" class="form-control @error('ten') is-invalid @enderror" id="ten" name="ten" value="{{ old('ten', $ctdt->ten) }}" required>
                         @error('ten')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                    </div>
+
+                    <!-- Added Bac Hoc field -->
+                    <div class="mb-3">
+                        <label for="bac_hoc_id" class="form-label">Bậc học <span class="text-danger">*</span></label>
+                        <select class="form-select @error('bac_hoc_id') is-invalid @enderror" id="bac_hoc_id" name="bac_hoc_id" required>
+                            <option value="">-- Chọn bậc học --</option>
+                            @foreach ($bacHocs as $bacHoc)
+                            <option value="{{ $bacHoc->id }}" @selected(old('bac_hoc_id', $ctdt->bac_hoc_id) == $bacHoc->id)>{{ $bacHoc->ten }}</option>
+                            @endforeach
+                        </select>
+                        @error('bac_hoc_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                    </div>
+
+                    <!-- Added Loai Hinh Dao Tao field -->
+                    <div class="mb-3">
+                        <label for="loai_hinh_dao_tao_id" class="form-label">Loại hình đào tạo <span class="text-danger">*</span></label>
+                        <select class="form-select @error('loai_hinh_dao_tao_id') is-invalid @enderror" id="loai_hinh_dao_tao_id" name="loai_hinh_dao_tao_id" required>
+                            <option value="">-- Chọn loại hình --</option>
+                            @foreach ($loaiHinhDaoTaos as $loaiHinh)
+                            <option value="{{ $loaiHinh->id }}" @selected(old('loai_hinh_dao_tao_id', $ctdt->loai_hinh_dao_tao_id) == $loaiHinh->id)>{{ $loaiHinh->ten }}</option>
+                            @endforeach
+                        </select>
+                        @error('loai_hinh_dao_tao_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     </div>
                     
                     <div class="mb-3">
@@ -35,6 +60,30 @@
                         </select>
                         @error('khoa_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     </div>
+
+                    <!-- Added Nganh field -->
+                    <div class="mb-3">
+                        <label for="nganh_id" class="form-label">Ngành <span class="text-danger">*</span></label>
+                        <select class="form-select @error('nganh_id') is-invalid @enderror" id="nganh_id" name="nganh_id" required>
+                            <option value="">-- Chọn ngành --</option>
+                            @foreach ($nganhs as $nganh)
+                            <option value="{{ $nganh->id }}" @selected(old('nganh_id', $ctdt->nganh_id) == $nganh->id)>{{ $nganh->ma }} - {{ $nganh->ten }}</option>
+                            @endforeach
+                        </select>
+                        @error('nganh_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                    </div>
+
+                    <!-- Added Chuyen Nganh field (optional) -->
+                    <div class="mb-3">
+                        <label for="chuyen_nganh_id" class="form-label">Chuyên ngành</label>
+                        <select class="form-select @error('chuyen_nganh_id') is-invalid @enderror" id="chuyen_nganh_id" name="chuyen_nganh_id">
+                            <option value="">-- Không có (đại trà) --</option>
+                            @foreach ($chuyenNganhs as $chuyenNganh)
+                            <option value="{{ $chuyenNganh->id }}" @selected(old('chuyen_nganh_id', $ctdt->chuyen_nganh_id) == $chuyenNganh->id)>{{ $chuyenNganh->ma }} - {{ $chuyenNganh->ten }}</option>
+                            @endforeach
+                        </select>
+                        @error('chuyen_nganh_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                    </div>
                     
                     <div class="mb-3">
                         <label for="he_dao_tao_id" class="form-label">Hệ đào tạo <span class="text-danger">*</span></label>
@@ -46,13 +95,25 @@
                         </select>
                         @error('he_dao_tao_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     </div>
+
+                    <!-- Added Khoa Hoc field -->
+                    <div class="mb-3">
+                        <label for="khoa_hoc_id" class="form-label">Khóa học <span class="text-danger">*</span></label>
+                        <select class="form-select @error('khoa_hoc_id') is-invalid @enderror" id="khoa_hoc_id" name="khoa_hoc_id" required>
+                            <option value="">-- Chọn khóa học --</option>
+                            @foreach ($khoaHocs as $khoaHoc)
+                            <option value="{{ $khoaHoc->id }}" @selected(old('khoa_hoc_id', $ctdt->khoa_hoc_id) == $khoaHoc->id)>{{ $khoaHoc->ma }} ({{ $khoaHoc->nienKhoa->nam_bat_dau }}-{{ $khoaHoc->nienKhoa->nam_ket_thuc }})</option>
+                            @endforeach
+                        </select>
+                        @error('khoa_hoc_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                    </div>
                     
                     <div class="mb-3">
                         <label for="nien_khoa_id" class="form-label">Niên khóa <span class="text-danger">*</span></label>
                         <select class="form-select @error('nien_khoa_id') is-invalid @enderror" id="nien_khoa_id" name="nien_khoa_id" required>
                             <option value="">-- Chọn niên khóa --</option>
                             @foreach ($nienKhoas as $nk)
-                            <option value="{{ $nk->id }}" @selected(old('nien_khoa_id', $ctdt->nien_khoa_id) == $nk->id)>{{ $nk->ma }}</option>
+                            <option value="{{ $nk->id }}" @selected(old('nien_khoa_id', $ctdt->nien_khoa_id) == $nk->id)>{{ $nk->ma }} ({{ $nk->nam_bat_dau }}-{{ $nk->nam_ket_thuc }})</option>
                             @endforeach
                         </select>
                         @error('nien_khoa_id')<div class="invalid-feedback">{{ $message }}</div>@enderror

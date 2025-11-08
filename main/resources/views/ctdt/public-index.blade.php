@@ -7,25 +7,11 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body {
-            background-color: #f8f9fa;
-        }
-        .navbar {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .ctdt-card {
-            transition: transform 0.2s, box-shadow 0.2s;
-            border: none;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        }
-        .ctdt-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
-        }
-        .badge-published {
-            background-color: #10b981;
-        }
+        body { background-color: #f8f9fa; }
+        .navbar { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .ctdt-card { transition: transform 0.2s, box-shadow 0.2s; border: none; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+        .ctdt-card:hover { transform: translateY(-4px); box-shadow: 0 4px 16px rgba(0,0,0,0.15); }
+        .badge-published { background-color: #10b981; }
     </style>
 </head>
 <body>
@@ -70,24 +56,35 @@
                         <div class="card ctdt-card h-100">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-start mb-3">
-                                    <h5 class="card-title mb-0">{{ $ctdt->ten_ctdt }}</h5>
+                                    <h5 class="card-title mb-0">{{ $ctdt->ten }}</h5>
                                     <span class="badge badge-published">
                                         <i class="fas fa-check-circle me-1"></i> Đã công bố
                                     </span>
                                 </div>
                                 
                                 <div class="mb-3">
+                                    <!-- Updated to use new relationships -->
+                                    <small class="text-muted d-block">
+                                        <i class="fas fa-graduation-cap me-1"></i>
+                                        <strong>Bậc học:</strong> {{ $ctdt->bacHoc->ten ?? 'N/A' }}
+                                    </small>
                                     <small class="text-muted d-block">
                                         <i class="fas fa-university me-1"></i>
-                                        <strong>Khoa:</strong> {{ $ctdt->khoa->ten_khoa }}
+                                        <strong>Khoa:</strong> {{ $ctdt->khoa->ten ?? 'N/A' }}
                                     </small>
                                     <small class="text-muted d-block">
                                         <i class="fas fa-book me-1"></i>
-                                        <strong>Ngành:</strong> {{ $ctdt->nganh->ten_nganh }}
+                                        <strong>Ngành:</strong> {{ $ctdt->nganh->ten ?? 'N/A' }}
                                     </small>
+                                    @if($ctdt->chuyenNganh)
+                                    <small class="text-muted d-block">
+                                        <i class="fas fa-tags me-1"></i>
+                                        <strong>Chuyên ngành:</strong> {{ $ctdt->chuyenNganh->ten }}
+                                    </small>
+                                    @endif
                                     <small class="text-muted d-block">
                                         <i class="fas fa-layer-group me-1"></i>
-                                        <strong>Hệ:</strong> {{ $ctdt->heDaoTao->ten_he }}
+                                        <strong>Hệ:</strong> {{ $ctdt->heDaoTao->ten ?? 'N/A' }}
                                     </small>
                                 </div>
 

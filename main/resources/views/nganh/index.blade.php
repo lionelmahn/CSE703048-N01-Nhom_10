@@ -26,7 +26,7 @@
                         <tr>
                             <th>Mã ngành</th>
                             <th>Tên ngành</th>
-                            <th>Hệ đào tạo</th>
+                            {{-- Removed Hệ đào tạo column --}}
                             <th>Số CTĐT</th>
                             <th>Thao tác</th>
                         </tr>
@@ -40,9 +40,7 @@
                                     {{ $nganh->ten }}
                                 </a>
                             </td>
-                            <td>
-                                <span class="badge bg-info">{{ $nganh->heDaoTao->ten ?? 'N/A' }}</span>
-                            </td>
+                            {{-- Removed Hệ đào tạo display --}}
                             <td>
                                 <span class="badge bg-secondary">{{ $nganh->chuongTrinhDaoTaos->count() }}</span>
                             </td>
@@ -70,7 +68,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="5" class="text-center text-muted py-4">
+                            <td colspan="4" class="text-center text-muted py-4">
                                 Chưa có ngành nào. <a href="{{ route('nganh.create') }}">Thêm ngành mới</a>
                             </td>
                         </tr>
