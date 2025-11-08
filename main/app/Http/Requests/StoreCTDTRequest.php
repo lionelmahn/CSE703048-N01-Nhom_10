@@ -12,7 +12,7 @@ class StoreCTDTRequest extends FormRequest
     {
         return Auth::check();
     }
-    
+
     public function rules(): array
     {
         return [
@@ -26,6 +26,7 @@ class StoreCTDTRequest extends FormRequest
             'ten' => 'required|string|max:255',
             'bac_hoc_id' => 'required|exists:bac_hoc,id',
             'loai_hinh_dao_tao_id' => 'required|exists:loai_hinh_dao_tao,id',
+            'he_dao_tao_id' => 'nullable|exists:he_dao_tao,id',
             'khoa_id' => 'required|exists:khoa,id',
             'nganh_id' => 'required|exists:nganh,id',
             'chuyen_nganh_id' => 'nullable|exists:chuyen_nganh,id',
@@ -37,7 +38,7 @@ class StoreCTDTRequest extends FormRequest
             'source_ctdt_id' => 'nullable|exists:chuong_trinh_dao_tao,id',
         ];
     }
-    
+
     public function messages(): array
     {
         return [
@@ -51,7 +52,7 @@ class StoreCTDTRequest extends FormRequest
             'ten.required' => 'Vui lòng nhập tên CTĐT',
         ];
     }
-    
+
     /**
      * Configure the validator instance.
      */

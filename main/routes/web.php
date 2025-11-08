@@ -18,6 +18,7 @@ use App\Http\Controllers\KhoaHocController;
 use App\Http\Controllers\KhoiKienThucController;
 use App\Http\Controllers\BacHocController;
 use App\Http\Controllers\LoaiHinhDaoTaoController;
+use App\Http\Controllers\CtdtHocPhanController;
 
 // Redirect root to dashboard
 Route::redirect('/', '/dashboard');
@@ -51,6 +52,18 @@ Route::middleware('auth')->group(function () {
         Route::post('/add-hoc-phan', [CtdtItemController::class, 'addHocPhan'])->name('add-hoc-phan');
         Route::delete('/hoc-phan/{hocPhan}', [CtdtItemController::class, 'removeHocPhan'])->name('remove-hoc-phan');
         Route::post('/update-order', [CtdtItemController::class, 'updateOrder'])->name('update-order');
+    });
+
+    // CTDT Hoc Phan Management routes
+    Route::prefix('ctdt/{ctdt}')->name('ctdt.')->group(function () {
+        Route::get('/khoi/{khoiId}/hoc-phans', [CtdtHocPhanController::class, 'getHocPhansByKhoi'])
+            ->name('khoi.hoc-phans');
+        Route::get('/available-hoc-phans', [CtdtHocPhanController::class, 'getAvailableHocPhans'])
+            ->name('available-hoc-phans');
+        Route::post('/hoc-phans', [CtdtHocPhanController::class, 'store'])
+            ->name('hoc-phans.store');
+        Route::delete('/hoc-phans/{hocPhan}', [CtdtHocPhanController::class, 'destroy'])
+            ->name('hoc-phans.destroy');
     });
 
     // Học phần routes (all roles)

@@ -56,6 +56,26 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="he_dao_tao_id" class="form-label">Hệ đào tạo</label>
+                                        <select class="form-select @error('he_dao_tao_id') is-invalid @enderror" 
+                                                id="he_dao_tao_id" name="he_dao_tao_id">
+                                            <option value="">-- Chọn hệ đào tạo --</option>
+                                            @foreach ($heDaoTaos as $heDaoTao)
+                                            <option value="{{ $heDaoTao->id }}" 
+                                                    @selected(old('he_dao_tao_id', $ctdt->he_dao_tao_id) == $heDaoTao->id)>
+                                                {{ $heDaoTao->ma }} - {{ $heDaoTao->ten }}
+                                            </option>
+                                            @endforeach
+                                        </select>
+                                        @error('he_dao_tao_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                        <div class="form-text">VD: Chính quy, Vừa học vừa làm, Liên thông...</div>
+                                    </div>
+                                </div>
+                            </div>
                             
                             <div class="row">
                                 <div class="col-md-6">

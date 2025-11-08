@@ -22,6 +22,7 @@ class UpdateCTDTRequest extends FormRequest
             'khoa_id' => 'required|exists:khoa,id',
             'bac_hoc_id' => 'required|exists:bac_hoc,id',
             'loai_hinh_dao_tao_id' => 'required|exists:loai_hinh_dao_tao,id',
+            'he_dao_tao_id' => 'nullable|exists:he_dao_tao,id',
             'khoa_hoc_id' => 'required|exists:khoa_hoc,id',
             'nganh_id' => 'required|exists:nganh,id',
             'chuyen_nganh_id' => 'nullable|exists:chuyen_nganh,id',

@@ -10,7 +10,6 @@ class HeDaoTao extends Model
     protected $table = 'he_dao_tao';
     protected $fillable = ['ma', 'ten'];
 
-
     public function chuongTrinhDaoTaos(): HasMany
     {
         return $this->hasMany(ChuongTrinhDaoTao::class);

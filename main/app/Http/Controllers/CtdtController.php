@@ -29,7 +29,7 @@ class CtdtController extends Controller
             $query->where('khoa_id', $user->khoa_id);
         }
 
-        $ctdts = $query->with(['khoa', 'nganh', 'chuyenNganh', 'nienKhoa', 'nguoiTao', 'bacHoc', 'loaiHinhDaoTao', 'khoaHoc'])
+        $ctdts = $query->with(['khoa', 'nganh', 'chuyenNganh', 'nienKhoa', 'nguoiTao', 'bacHoc', 'loaiHinhDaoTao', 'khoaHoc', 'heDaoTao'])
             ->paginate(15);
 
         return view('ctdt.index', compact('ctdts'));
@@ -53,6 +53,7 @@ class CtdtController extends Controller
         $khoaHocs = KhoaHoc::with('nienKhoa')->get();
         $bacHocs = BacHoc::all();
         $loaiHinhDaoTaos = LoaiHinhDaoTao::all();
+        $heDaoTaos = HeDaoTao::all();
 
         // If copy mode, get list of CTDTs to copy from
         $ctdtsForCopy = [];
@@ -71,6 +72,7 @@ class CtdtController extends Controller
             'khoaHocs',
             'bacHocs',
             'loaiHinhDaoTaos',
+            'heDaoTaos',
             'ctdtsForCopy'
         ));
     }
@@ -186,10 +188,13 @@ class CtdtController extends Controller
             'khoaHoc',
             'bacHoc',
             'loaiHinhDaoTao',
+            'heDaoTao',
             'nguoiTao'
         ]);
 
-        return view('ctdt.show', compact('ctdt'));
+        $allKhoiKienThuc = \App\Models\KhoiKienThuc::orderBy('ma')->get();
+
+        return view('ctdt.show', compact('ctdt', 'allKhoiKienThuc'));
     }
 
     public function edit(ChuongTrinhDaoTao $ctdt)
@@ -208,10 +213,11 @@ class CtdtController extends Controller
         $khoaHocs = KhoaHoc::with('nienKhoa')->get();
         $bacHocs = BacHoc::all();
         $loaiHinhDaoTaos = LoaiHinhDaoTao::all();
+        $heDaoTaos = HeDaoTao::all();
         $nganhs = Nganh::all();
         $chuyenNganhs = $ctdt->nganh_id ? ChuyenNganh::where('nganh_id', $ctdt->nganh_id)->get() : [];
 
-        return view('ctdt.edit', compact('ctdt', 'khoas', 'nienKhoas', 'khoaHocs', 'bacHocs', 'loaiHinhDaoTaos', 'nganhs', 'chuyenNganhs'));
+        return view('ctdt.edit', compact('ctdt', 'khoas', 'nienKhoas', 'khoaHocs', 'bacHocs', 'loaiHinhDaoTaos', 'heDaoTaos', 'nganhs', 'chuyenNganhs'));
     }
 
     public function update(UpdateCTDTRequest $request, ChuongTrinhDaoTao $ctdt)

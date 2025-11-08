@@ -118,9 +118,27 @@
                                         @error('loai_hinh_dao_tao_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                     </div>
                                 </div>
+                                
+                                {{-- Added HeDaoTao dropdown --}}
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="he_dao_tao_id" class="form-label">Hệ đào tạo</label>
+                                        <select class="form-select @error('he_dao_tao_id') is-invalid @enderror" 
+                                                id="he_dao_tao_id" name="he_dao_tao_id">
+                                            <option value="">-- Chọn hệ đào tạo --</option>
+                                            @foreach ($heDaoTaos as $heDaoTao)
+                                            <option value="{{ $heDaoTao->id }}" 
+                                                    @selected(old('he_dao_tao_id') == $heDaoTao->id)>
+                                                {{ $heDaoTao->ma }} - {{ $heDaoTao->ten }}
+                                            </option>
+                                            @endforeach
+                                        </select>
+                                        @error('he_dao_tao_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                        <div class="form-text">VD: Chính quy, Vừa học vừa làm, Liên thông...</div>
+                                    </div>
+                                </div>
                             </div>
                             
-                            {{-- Added Khoa field and Ten CTDT field --}}
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="mb-3">
@@ -328,6 +346,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const codeError = document.getElementById('codeError');
     const khoaSelect = document.getElementById('khoa_id');
     const tenInput = document.getElementById('ten');
+    const heDaoTaoSelect = document.getElementById('he_dao_tao_id');
     
     // Auto-generate code when all required fields are filled
     function generateCode() {
@@ -338,6 +357,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const chuyenNganhId = chuyenNganhSelect.value;
         const khoaId = khoaSelect.value;
         const ten = tenInput.value;
+        const heDaoTaoId = heDaoTaoSelect.value;
         
         if (!bacHocId || !loaiHinhId || !nganhId || !khoaHocId || !khoaId || !ten) {
             maCtdtInput.value = '';
@@ -360,7 +380,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 chuyen_nganh_id: chuyenNganhId,
                 khoa_hoc_id: khoaHocId,
                 khoa_id: khoaId,
-                ten: ten
+                ten: ten,
+                he_dao_tao_id: heDaoTaoId
             })
         })
         .then(response => response.json())
@@ -392,6 +413,7 @@ document.addEventListener('DOMContentLoaded', function() {
     khoaSelect.addEventListener('change', generateCode);
     tenInput.addEventListener('input', generateCode);
     refreshBtn.addEventListener('click', generateCode);
+    heDaoTaoSelect.addEventListener('change', generateCode);
     
     // Filter chuyen nganh by nganh
     nganhSelect.addEventListener('change', function() {
