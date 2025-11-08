@@ -48,12 +48,9 @@
                     <!-- Added Chuyen Nganh display -->
                     <div class="col-md-6 mb-3">
                         <small class="text-muted">Chuyên ngành</small>
-                        <p>{{ $ctdt->chuyenNganh?->ten ?? 'Đại trà' }}</p>
+                        <p>{{ $ctdt->chuyenNganh?->ten ?? '' }}</p>
                     </div>
-                    <div class="col-md-6 mb-3">
-                        <small class="text-muted">Hệ đào tạo</small>
-                        <p>{{ $ctdt->heDaoTao->ten }}</p>
-                    </div>
+                    <!-- Removed heDaoTao field since we removed the relationship -->
                     <!-- Added Khoa Hoc display -->
                     <div class="col-md-6 mb-3">
                         <small class="text-muted">Khóa học</small>

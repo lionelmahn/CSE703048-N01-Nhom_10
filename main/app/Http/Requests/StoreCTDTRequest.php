@@ -12,7 +12,7 @@ class StoreCTDTRequest extends FormRequest
     {
         return Auth::check();
     }
-
+    
     public function rules(): array
     {
         return [
@@ -29,7 +29,6 @@ class StoreCTDTRequest extends FormRequest
             'khoa_id' => 'required|exists:khoa,id',
             'nganh_id' => 'required|exists:nganh,id',
             'chuyen_nganh_id' => 'nullable|exists:chuyen_nganh,id',
-            'he_dao_tao_id' => 'required|exists:he_dao_tao,id',
             'nien_khoa_id' => 'required|exists:nien_khoa,id',
             'khoa_hoc_id' => 'required|exists:khoa_hoc,id',
             'hieu_luc_tu' => 'required|date',
@@ -38,7 +37,7 @@ class StoreCTDTRequest extends FormRequest
             'source_ctdt_id' => 'nullable|exists:chuong_trinh_dao_tao,id',
         ];
     }
-
+    
     public function messages(): array
     {
         return [
@@ -48,9 +47,11 @@ class StoreCTDTRequest extends FormRequest
             'bac_hoc_id.required' => 'Vui lòng chọn bậc học',
             'loai_hinh_dao_tao_id.required' => 'Vui lòng chọn loại hình đào tạo',
             'khoa_hoc_id.required' => 'Vui lòng chọn khóa học',
+            'khoa_id.required' => 'Vui lòng chọn khoa quản lý',
+            'ten.required' => 'Vui lòng nhập tên CTĐT',
         ];
     }
-
+    
     /**
      * Configure the validator instance.
      */

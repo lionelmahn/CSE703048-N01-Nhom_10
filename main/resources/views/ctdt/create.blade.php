@@ -120,6 +120,39 @@
                                 </div>
                             </div>
                             
+                            {{-- Added Khoa field and Ten CTDT field --}}
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="khoa_id" class="form-label">Khoa quản lý <span class="text-danger">*</span></label>
+                                        <select class="form-select @error('khoa_id') is-invalid @enderror" 
+                                                id="khoa_id" name="khoa_id" required>
+                                            <option value="">-- Chọn khoa --</option>
+                                            @foreach ($khoas as $khoa)
+                                            <option value="{{ $khoa->id }}" @selected(old('khoa_id') == $khoa->id)>
+                                                {{ $khoa->ma }} - {{ $khoa->ten }}
+                                            </option>
+                                            @endforeach
+                                        </select>
+                                        @error('khoa_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="ten" class="form-label">Tên CTĐT <span class="text-danger">*</span></label>
+                                        <input type="text" 
+                                               class="form-control @error('ten') is-invalid @enderror" 
+                                               id="ten" 
+                                               name="ten" 
+                                               value="{{ old('ten') }}" 
+                                               placeholder="Ví dụ: Chương trình đào tạo Công nghệ thông tin 2023"
+                                               required>
+                                        @error('ten')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                    </div>
+                                </div>
+                            </div>
+                            
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="mb-3">
@@ -293,6 +326,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const submitBtn = document.getElementById('submitBtn');
     const codeSuccess = document.getElementById('codeSuccess');
     const codeError = document.getElementById('codeError');
+    const khoaSelect = document.getElementById('khoa_id');
+    const tenInput = document.getElementById('ten');
     
     // Auto-generate code when all required fields are filled
     function generateCode() {
@@ -301,8 +336,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const nganhId = nganhSelect.value;
         const khoaHocId = khoaHocSelect.value;
         const chuyenNganhId = chuyenNganhSelect.value;
+        const khoaId = khoaSelect.value;
+        const ten = tenInput.value;
         
-        if (!bacHocId || !loaiHinhId || !nganhId || !khoaHocId) {
+        if (!bacHocId || !loaiHinhId || !nganhId || !khoaHocId || !khoaId || !ten) {
             maCtdtInput.value = '';
             codeSuccess.classList.add('d-none');
             codeError.classList.add('d-none');
@@ -321,7 +358,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 loai_hinh_dao_tao_id: loaiHinhId,
                 nganh_id: nganhId,
                 chuyen_nganh_id: chuyenNganhId,
-                khoa_hoc_id: khoaHocId
+                khoa_hoc_id: khoaHocId,
+                khoa_id: khoaId,
+                ten: ten
             })
         })
         .then(response => response.json())
@@ -350,6 +389,8 @@ document.addEventListener('DOMContentLoaded', function() {
     nganhSelect.addEventListener('change', generateCode);
     chuyenNganhSelect.addEventListener('change', generateCode);
     khoaHocSelect.addEventListener('change', generateCode);
+    khoaSelect.addEventListener('change', generateCode);
+    tenInput.addEventListener('input', generateCode);
     refreshBtn.addEventListener('click', generateCode);
     
     // Filter chuyen nganh by nganh

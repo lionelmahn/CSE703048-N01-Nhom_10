@@ -29,7 +29,7 @@ class CtdtController extends Controller
             $query->where('khoa_id', $user->khoa_id);
         }
 
-        $ctdts = $query->with(['khoa', 'nganh', 'chuyenNganh', 'heDaoTao', 'nienKhoa', 'nguoiTao', 'bacHoc', 'loaiHinhDaoTao', 'khoaHoc'])
+        $ctdts = $query->with(['khoa', 'nganh', 'chuyenNganh', 'nienKhoa', 'nguoiTao', 'bacHoc', 'loaiHinhDaoTao', 'khoaHoc'])
             ->paginate(15);
 
         return view('ctdt.index', compact('ctdts'));
@@ -49,7 +49,6 @@ class CtdtController extends Controller
         $khoas = $khoasQuery->get();
         $nganhs = Nganh::all();
         $chuyenNganhs = ChuyenNganh::all();
-        $heDaoTaos = HeDaoTao::all();
         $nienKhoas = NienKhoa::orderBy('nam_bat_dau', 'desc')->get();
         $khoaHocs = KhoaHoc::with('nienKhoa')->get();
         $bacHocs = BacHoc::all();
@@ -68,7 +67,6 @@ class CtdtController extends Controller
             'khoas',
             'nganhs',
             'chuyenNganhs',
-            'heDaoTaos',
             'nienKhoas',
             'khoaHocs',
             'bacHocs',
@@ -178,12 +176,12 @@ class CtdtController extends Controller
         $ctdt->load([
             'ctdtKhois.khoiKienThuc',
             'ctdtHocPhans.hocPhan',
+            'ctdtHocPhans.khoiKienThuc',
             'ctdtRangBuocs',
             'ctdtTuongDuongs',
             'khoa',
             'nganh',
             'chuyenNganh',
-            'heDaoTao',
             'nienKhoa',
             'khoaHoc',
             'bacHoc',
@@ -206,7 +204,6 @@ class CtdtController extends Controller
         }
 
         $khoas = $khoasQuery->get();
-        $heDaoTaos = HeDaoTao::all();
         $nienKhoas = NienKhoa::orderBy('nam_bat_dau', 'desc')->get();
         $khoaHocs = KhoaHoc::with('nienKhoa')->get();
         $bacHocs = BacHoc::all();
@@ -214,7 +211,7 @@ class CtdtController extends Controller
         $nganhs = Nganh::all();
         $chuyenNganhs = $ctdt->nganh_id ? ChuyenNganh::where('nganh_id', $ctdt->nganh_id)->get() : [];
 
-        return view('ctdt.edit', compact('ctdt', 'khoas', 'heDaoTaos', 'nienKhoas', 'khoaHocs', 'bacHocs', 'loaiHinhDaoTaos', 'nganhs', 'chuyenNganhs'));
+        return view('ctdt.edit', compact('ctdt', 'khoas', 'nienKhoas', 'khoaHocs', 'bacHocs', 'loaiHinhDaoTaos', 'nganhs', 'chuyenNganhs'));
     }
 
     public function update(UpdateCTDTRequest $request, ChuongTrinhDaoTao $ctdt)
