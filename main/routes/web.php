@@ -64,6 +64,13 @@ Route::middleware('auth')->group(function () {
             ->name('hoc-phans.store');
         Route::delete('/hoc-phans/{hocPhan}', [CtdtHocPhanController::class, 'destroy'])
             ->name('hoc-phans.destroy');
+
+        Route::get('/manage-hoc-phan', [CtdtHocPhanController::class, 'manage'])
+            ->name('manage-hoc-phan');
+        Route::get('/structure', [CtdtHocPhanController::class, 'getCtdtStructure'])
+            ->name('structure');
+        Route::post('/save-changes', [CtdtHocPhanController::class, 'saveChanges'])
+            ->name('save-changes');
     });
 
     // Học phần routes (all roles)
@@ -83,6 +90,13 @@ Route::middleware('auth')->group(function () {
         Route::resource('bac-hoc', BacHocController::class);
         Route::resource('loai-hinh-dao-tao', LoaiHinhDaoTaoController::class);
     });
+
+    // API routes for searching hoc phan
+    Route::get('/api/hoc-phan/search', [CtdtHocPhanController::class, 'searchHocPhan'])
+        ->name('api.hoc-phan.search');
+
+    Route::get('/api/ctdt/{ctdtId}/khoi-kien-thuc/available', [CtdtHocPhanController::class, 'getAvailableKhoiKienThuc'])
+        ->name('api.khoi-kien-thuc.available');
 });
 
 // Public routes for viewing published CTDT (no auth required)

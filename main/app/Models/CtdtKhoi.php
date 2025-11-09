@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class CtdtKhoi extends Model
 {
@@ -18,5 +19,11 @@ class CtdtKhoi extends Model
     public function khoi(): BelongsTo
     {
         return $this->belongsTo(KhoiKienThuc::class, 'khoi_id');
+    }
+
+    public function ctdtHocPhans(): HasMany
+    {
+        return $this->hasMany(CtdtHocPhan::class, 'khoi_id', 'khoi_id')
+            ->where('ctdt_id', $this->ctdt_id);
     }
 }

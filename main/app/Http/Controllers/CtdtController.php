@@ -92,9 +92,7 @@ class CtdtController extends Controller
             // Copy khoi kien thuc structure
             foreach ($sourceCtdt->ctdtKhois as $ctdtKhoi) {
                 $ctdt->ctdtKhois()->create([
-                    'khoi_kien_thuc_id' => $ctdtKhoi->khoi_kien_thuc_id,
-                    'so_tc_bat_buoc' => $ctdtKhoi->so_tc_bat_buoc,
-                    'so_tc_tu_chon' => $ctdtKhoi->so_tc_tu_chon,
+                    'khoi_id' => $ctdtKhoi->khoi_id,
                     'ghi_chu' => $ctdtKhoi->ghi_chu,
                 ]);
             }
@@ -103,7 +101,7 @@ class CtdtController extends Controller
             foreach ($sourceCtdt->ctdtHocPhans as $ctdtHocPhan) {
                 $ctdt->ctdtHocPhans()->create([
                     'hoc_phan_id' => $ctdtHocPhan->hoc_phan_id,
-                    'khoi_kien_thuc_id' => $ctdtHocPhan->khoi_kien_thuc_id,
+                    'khoi_id' => $ctdtHocPhan->khoi_id,
                     'hoc_ky' => $ctdtHocPhan->hoc_ky,
                     'loai' => $ctdtHocPhan->loai,
                     'thu_tu' => $ctdtHocPhan->thu_tu,
@@ -176,9 +174,9 @@ class CtdtController extends Controller
         $this->authorize('view', $ctdt);
 
         $ctdt->load([
-            'ctdtKhois.khoiKienThuc',
+            'ctdtKhois.khoi',
             'ctdtHocPhans.hocPhan',
-            'ctdtHocPhans.khoiKienThuc',
+            'ctdtHocPhans.khoi',
             'ctdtRangBuocs',
             'ctdtTuongDuongs',
             'khoa',
