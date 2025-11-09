@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\LoaiHinhDaoTao;
+use App\Helpers\CodeGenerator;
 use Illuminate\Http\Request;
 
 class LoaiHinhDaoTaoController extends Controller
@@ -15,11 +16,17 @@ class LoaiHinhDaoTaoController extends Controller
 
     public function create()
     {
-        return view('loai-hinh-dao-tao.create');
+        $suggestedCode = CodeGenerator::generateCode('loai_hinh_dao_tao', 'ma', 'LHDT', 2);
+        return view('loai-hinh-dao-tao.create', compact('suggestedCode'));
     }
 
     public function store(Request $request)
     {
+        if ($request->has('auto_generate_code') && $request->auto_generate_code == '1') {
+            $code = CodeGenerator::generateCode('loai_hinh_dao_tao', 'ma', 'LHDT', 2);
+            $request->merge(['ma' => $code]);
+        }
+
         $validated = $request->validate([
             'ma' => 'required|string|max:10|unique:loai_hinh_dao_tao',
             'ten' => 'required|string|max:255',

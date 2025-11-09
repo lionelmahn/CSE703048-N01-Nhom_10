@@ -5,7 +5,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h2 class="mb-1">Quản lý học phần CTĐT</h2>
-            <p class="text-muted mb-0">{{ $ctdt->ten }} ({{ $ctdt->ma_ctdt }})</p>
+            <p class="text-muted mb-0">{{ $ctdt->ten }} ({{ $ctdt->ma }})</p>
         </div>
         <a href="{{ route('ctdt.show', $ctdt->id) }}" class="btn btn-secondary">
             <i class="bi bi-arrow-left"></i> Quay lại
@@ -72,10 +72,16 @@
                         <h5 class="mb-0">
                             <i class="bi bi-diagram-3"></i> {{ $ctdt->ten }}
                         </h5>
-                        <button id="addKhoiBtn" class="btn btn-sm btn-light" 
-                                onclick="window.open('{{ route('khoi-kien-thuc.create') }}', '_blank')">
-                            <i class="bi bi-plus-circle"></i> Thêm khối
-                        </button>
+                        <!-- Replaced single "Thêm khối" button with two separate buttons -->
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-sm btn-light" onclick="showAddKhoiModal()">
+                                <i class="bi bi-plus-circle"></i> Thêm khối từ hệ thống
+                            </button>
+                            <a href="{{ route('khoi-kien-thuc.create') }}" target="_blank" 
+                               class="btn btn-sm btn-outline-light">
+                                <i class="bi bi-plus-circle"></i> Tạo khối mới
+                            </a>
+                        </div>
                     </div>
                 </div>
                 <!-- Card body with fixed info alert and scrollable structure -->
@@ -195,6 +201,12 @@ function loadCtdtStructure() {
 
 // Render CTDT structure tree
 function renderCtdtStructure() {
+    const expandedKhoiIds = [];
+    document.querySelectorAll('.accordion-collapse.show').forEach(el => {
+        const khoiId = el.getAttribute('data-khoi-id');
+        if (khoiId) expandedKhoiIds.push(parseInt(khoiId));
+    });
+    
     let html = '<div class="accordion" id="khoiAccordion">';
     
     ctdtStructure.forEach((khoi, index) => {
@@ -216,14 +228,18 @@ function renderCtdtStructure() {
             totalCredits += add.hocPhanData.so_tinchi;
         });
         
+        const shouldBeExpanded = expandedKhoiIds.includes(khoi.khoi_id);
+        const collapseClass = shouldBeExpanded ? 'show' : '';
+        const buttonClass = shouldBeExpanded ? '' : 'collapsed';
+        
         html += `
             <div class="accordion-item ${khoiClass}">
                 <h2 class="accordion-header">
-                    <button class="accordion-button collapsed" 
+                    <button class="accordion-button ${buttonClass}" 
                             type="button" 
                             data-bs-toggle="collapse" 
                             data-bs-target="#khoi${khoi.khoi_id}"
-                            aria-expanded="false"
+                            aria-expanded="${shouldBeExpanded}"
                             aria-controls="khoi${khoi.khoi_id}">
                         <span class="fw-bold">${khoi.ten}</span>
                         <span class="badge bg-secondary ms-2">${totalCredits} TC</span>
@@ -231,9 +247,10 @@ function renderCtdtStructure() {
                     </button>
                 </h2>
                 <div id="khoi${khoi.khoi_id}" 
-                     class="accordion-collapse collapse" 
-                     data-bs-parent="#khoiAccordion">
-                    <div class="accordion-body" onclick="selectKhoi(${khoi.khoi_id})">
+                     class="accordion-collapse collapse ${collapseClass}" 
+                     data-bs-parent="#khoiAccordion"
+                     data-khoi-id="${khoi.khoi_id}">
+                    <div class="accordion-body">
                         <div class="list-group list-group-flush" id="hocPhanList${khoi.khoi_id}">
         `;
         
@@ -298,30 +315,49 @@ function renderCtdtStructure() {
     
     html += '</div>';
     
-    html += `
-        <div class="mt-3 p-3 border-top bg-light">
-            <p class="text-muted small mb-2">
-                <i class="bi bi-info-circle"></i> Muốn thêm khối kiến thức khác?
-            </p>
-            <div class="d-flex gap-2">
-                <button class="btn btn-sm btn-success" onclick="showAddKhoiModal()">
-                    <i class="bi bi-plus-circle"></i> Thêm khối từ hệ thống
-                </button>
-                <a href="{{ route('khoi-kien-thuc.create') }}" target="_blank" 
-                   class="btn btn-sm btn-outline-success">
-                    <i class="bi bi-plus-circle"></i> Tạo khối mới
-                </a>
-            </div>
-        </div>
-    `;
-    
     document.getElementById('ctdtStructure').innerHTML = html;
+    
+    ctdtStructure.forEach(khoi => {
+        const collapseElement = document.getElementById(`khoi${khoi.khoi_id}`);
+        if (collapseElement) {
+            // Listen for when accordion is shown (expanded)
+            collapseElement.addEventListener('shown.bs.collapse', function() {
+                const khoiId = parseInt(this.getAttribute('data-khoi-id'));
+                selectKhoi(khoiId);
+            });
+        }
+    });
 }
 
-// Select khoi as target
 function selectKhoi(khoiId) {
+    // Only update if different khoi is selected
+    if (selectedKhoiId === khoiId) return;
+    
     selectedKhoiId = khoiId;
-    renderCtdtStructure();
+    
+    // Update highlights without full re-render
+    document.querySelectorAll('.accordion-item').forEach(item => {
+        item.classList.remove('border-success', 'border-3');
+    });
+    
+    document.querySelectorAll('.badge.bg-success').forEach(badge => {
+        if (badge.textContent.trim() === 'Đang chọn') {
+            badge.remove();
+        }
+    });
+    
+    // Add highlight to selected khoi
+    const selectedCollapse = document.getElementById(`khoi${khoiId}`);
+    if (selectedCollapse) {
+        const accordionItem = selectedCollapse.closest('.accordion-item');
+        accordionItem.classList.add('border-success', 'border-3');
+        
+        const button = accordionItem.querySelector('.accordion-button');
+        const badge = document.createElement('span');
+        badge.className = 'badge bg-success ms-2';
+        badge.textContent = 'Đang chọn';
+        button.appendChild(badge);
+    }
 }
 
 // Search hoc phan

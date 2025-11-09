@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\BacHoc;
+use App\Helpers\CodeGenerator;
 use Illuminate\Http\Request;
 
 class BacHocController extends Controller
@@ -15,11 +16,17 @@ class BacHocController extends Controller
 
     public function create()
     {
-        return view('bac-hoc.create');
+        $suggestedCode = CodeGenerator::generateCode('bac_hoc', 'ma', 'BH', 2);
+        return view('bac-hoc.create', compact('suggestedCode'));
     }
 
     public function store(Request $request)
     {
+        if ($request->has('auto_generate_code') && $request->auto_generate_code == '1') {
+            $code = CodeGenerator::generateCode('bac_hoc', 'ma', 'BH', 2);
+            $request->merge(['ma' => $code]);
+        }
+
         $validated = $request->validate([
             'ma' => 'required|string|max:10|unique:bac_hoc',
             'ten' => 'required|string|max:255',

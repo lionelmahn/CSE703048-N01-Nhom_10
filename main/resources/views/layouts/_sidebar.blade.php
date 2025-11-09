@@ -66,7 +66,17 @@
                 <i class="fas fa-cubes"></i> Khối kiến thức
             </a>
         </div>
+                <div class="nav-item @if(request()->routeIs('bac-hoc.*')) active @endif">
+            <a href="{{ route('bac-hoc.index') }}">
+                <i class="fas fa-layer-group"></i> Bậc học
+            </a>
+        </div>
         
+        <div class="nav-item @if(request()->routeIs('loai-hinh-dao-tao.*')) active @endif">
+            <a href="{{ route('loai-hinh-dao-tao.index') }}">
+                <i class="fas fa-stream"></i> Loại hình đào tạo
+            </a>
+        </div>
         {{-- Fix route name from user.* to users.* --}}
         <div class="nav-item @if(request()->routeIs('users.*')) active @endif">
             <a href="{{ route('users.index') }}">
