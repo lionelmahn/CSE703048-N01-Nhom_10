@@ -5,7 +5,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h2 class="mb-1">Quản lý học phần CTĐT</h2>
-            <p class="text-muted mb-0">{{ $ctdt->ten }} ({{ $ctdt->ma }})</p>
+            <p class="text-muted mb-0">{{ $ctdt->ten }} ({{ $ctdt->ma_ctdt }})</p>
         </div>
         <a href="{{ route('ctdt.show', $ctdt->id) }}" class="btn btn-secondary">
             <i class="bi bi-arrow-left"></i> Quay lại
