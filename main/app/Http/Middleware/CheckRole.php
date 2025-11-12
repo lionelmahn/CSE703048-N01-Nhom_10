@@ -19,6 +19,15 @@ class CheckRole
             return redirect()->route('login');
         }
 
+        if (!$request->user()->isActive()) {
+            auth()->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return redirect()->route('login')
+                ->withErrors(['email' => 'Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên.']);
+        }
+
         $userRole = $request->user()->role;
 
         // Check if user has one of the required roles

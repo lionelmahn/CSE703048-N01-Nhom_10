@@ -113,54 +113,233 @@
         
         <div class="card">
             <div class="card-header bg-light d-flex justify-content-between align-items-center">
-                <h6 class="mb-0">Học phần</h6>
+                <h6 class="mb-0"><i class="fas fa-book-open me-2"></i>Khung chương trình</h6>
                 @can('update', $ctdt)
                 <a href="{{ route('ctdt.manage-hoc-phan', $ctdt->id) }}" class="btn btn-sm btn-primary">
-                    <i class="bi bi-gear"></i> Quản lý học phần
+                    <i class="fas fa-gear"></i> Quản lý học phần
                 </a>
                 @endcan
             </div>
-            <div class="table-responsive">
-                <table class="table table-sm mb-0">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Mã</th>
-                            <th>Tên</th>
-                            <th>Tín chỉ</th>
-                            <th>Khối</th>
-                            <th>Loại</th>
-                            <th style="width: 80px;">Thứ tự</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($ctdt->ctdtHocPhans->sortBy('thu_tu') as $ctdtHocPhan)
-                        <tr>
-                            <td>{{ $ctdtHocPhan->hocPhan->ma_hp }}</td>
-                            <td>{{ $ctdtHocPhan->hocPhan->ten_hp }}</td>
-                            <td>{{ $ctdtHocPhan->hocPhan->so_tinchi }}</td>
-                            <td>{{ $ctdtHocPhan->khoi->ten ?? 'N/A' }}</td>
-                            <td>
-                                <span class="badge bg-{{ $ctdtHocPhan->loai === 'bat_buoc' ? 'danger' : 'warning' }}">
-                                    {{ $ctdtHocPhan->loai === 'bat_buoc' ? 'Bắt buộc' : 'Tự chọn' }}
-                                </span>
-                            </td>
-                            <td>{{ $ctdtHocPhan->thu_tu }}</td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="6" class="text-center text-muted py-3">
-                                Chưa có học phần nào
-                                @can('update', $ctdt)
-                                <br>
-                                <a href="{{ route('ctdt.manage-hoc-phan', $ctdt->id) }}" class="btn btn-sm btn-primary mt-2">
-                                    <i class="bi bi-plus-circle"></i> Thêm học phần
-                                </a>
-                                @endcan
-                            </td>
-                        </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+            <div class="card-body p-0">
+                @php
+                    $stt = 1;
+                    
+                    // Filter out courses with null khoi_id first
+                    $validHocPhans = $ctdt->ctdtHocPhans->filter(function($item) {
+                        return $item->khoi_id !== null && $item->khoi !== null;
+                    });
+                    
+                    // Group by khoi_id
+                    $khoiGroups = $validHocPhans->groupBy('khoi_id');
+                    
+                    // Sort groups by khoi.ma
+                    $sortedKhoiGroups = $khoiGroups->sortBy(function($group, $khoiId) {
+                        $khoi = $group->first()->khoi;
+                        return $khoi ? $khoi->ma : 'ZZZ';
+                    });
+                    
+                    // Track orphan courses (those without proper khoi)
+                    $orphanHocPhans = $ctdt->ctdtHocPhans->filter(function($item) {
+                        return $item->khoi_id === null || $item->khoi === null;
+                    });
+                    
+                    $constraintsByHocPhan = [];
+                    foreach ($ctdt->ctdtRangBuocs as $rangBuoc) {
+                        if (!isset($constraintsByHocPhan[$rangBuoc->hoc_phan_id])) {
+                            $constraintsByHocPhan[$rangBuoc->hoc_phan_id] = [];
+                        }
+                        $constraintsByHocPhan[$rangBuoc->hoc_phan_id][] = $rangBuoc;
+                    }
+                    
+                    $kieuLabels = [
+                        'tien_quyet' => 'Tiên quyết',
+                        'hoc_truoc' => 'Học trước',
+                        'song_hanh' => 'Song hành',
+                        'khong_hoc_cung' => 'Không học cùng'
+                    ];
+                    
+                    $totalCourses = $ctdt->ctdtHocPhans->count();
+                    $totalCredits = $ctdt->ctdtHocPhans->sum(function($item) {
+                        return $item->hocPhan->so_tinchi;
+                    });
+                    
+                    if (env('APP_DEBUG')) {
+                        error_log("Total courses: " . $ctdt->ctdtHocPhans->count());
+                        error_log("Valid courses: " . $validHocPhans->count());
+                        error_log("Orphan courses: " . $orphanHocPhans->count());
+                        error_log("Knowledge blocks: " . $sortedKhoiGroups->count());
+                        
+                        foreach ($sortedKhoiGroups as $khoiId => $hocPhans) {
+                            $khoi = $hocPhans->first()->khoi;
+                            error_log("Rendering Khoi: " . ($khoi ? $khoi->ma : 'NULL') . " (ID: $khoiId) with " . $hocPhans->count() . " courses");
+                        }
+                    }
+                @endphp
+                
+                <div class="table-responsive">
+                    <table class="table table-bordered curriculum-table mb-0">
+                        <thead>
+                            <tr class="table-warning">
+                                <th class="text-center" style="width: 100px;">Mã khối</th>
+                                <th style="width: 250px;">Tên khối</th>
+                                <th class="text-center" style="width: 60px;">STT</th>
+                                <th class="text-center" style="width: 120px;">Mã học phần</th>
+                                <th>Tên học phần</th>
+                                <th class="text-center" style="width: 80px;">Số TC</th>
+                                <th class="text-center" style="width: 100px;">Loại</th>
+                                <th style="width: 250px;">Điều kiện ràng buộc</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($sortedKhoiGroups as $khoiId => $hocPhans)
+                                @php
+                                    $khoi = $hocPhans->first()->khoi;
+                                    // Sort courses by thu_tu within each block
+                                    $sortedHocPhans = $hocPhans->sortBy('thu_tu')->values();
+                                    $totalInKhoi = $sortedHocPhans->count();
+                                    
+                                    if (env('APP_DEBUG')) {
+                                        error_log("Rendering Khoi: " . $khoi->ma . " (ID: $khoiId) with $totalInKhoi courses");
+                                    }
+                                @endphp
+                                
+                                @foreach($sortedHocPhans as $index => $ctdtHocPhan)
+                                    @php
+                                        $hocPhan = $ctdtHocPhan->hocPhan;
+                                        $constraints = $constraintsByHocPhan[$hocPhan->id] ?? [];
+                                    @endphp
+                                    <tr>
+                                        {{-- Only render khoi cells on first row of each block --}}
+                                        @if($index === 0)
+                                        <td class="text-center align-middle fw-bold bg-light" rowspan="{{ $totalInKhoi }}">
+                                            {{ $khoi->ma }}
+                                        </td>
+                                        <td class="align-middle fw-semibold bg-light" rowspan="{{ $totalInKhoi }}">
+                                            {{ $khoi->ten }}
+                                        </td>
+                                        @endif
+                                        
+                                        <td class="text-center">{{ $stt++ }}</td>
+                                        
+                                        <td class="text-center">
+                                            <span class="badge bg-secondary bg-opacity-10 text-secondary">
+                                                {{ $hocPhan->ma_hp }}
+                                            </span>
+                                        </td>
+                                        
+                                        <td>
+                                            <a href="#" class="text-decoration-none text-primary">
+                                                {{ $hocPhan->ten_hp }}
+                                            </a>
+                                        </td>
+                                        
+                                        <td class="text-center">
+                                            <span class="badge bg-info bg-opacity-10 text-info">
+                                                {{ $hocPhan->so_tinchi }}
+                                            </span>
+                                        </td>
+                                        
+                                        <td class="text-center">
+                                            @if($ctdtHocPhan->loai === 'bat_buoc')
+                                            <span class="badge bg-danger">Bắt buộc</span>
+                                            @else
+                                            <span class="badge bg-warning">Tự chọn</span>
+                                            @endif
+                                        </td>
+                                        
+                                        <td>
+                                            @if(!empty($constraints))
+                                                <div class="small">
+                                                    @foreach($constraints as $constraint)
+                                                        @php
+                                                            $relatedHocPhan = $constraint->lienQuanHocPhan;
+                                                            $kieuLabel = $kieuLabels[$constraint->kieu] ?? ucfirst($constraint->kieu);
+                                                        @endphp
+                                                        <div class="mb-1">
+                                                            <i class="fas fa-arrow-right text-muted me-1"></i>
+                                                            <span class="fw-semibold text-primary">{{ $kieuLabel }}</span>
+                                                            ({{ $relatedHocPhan->ten_hp }})
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+                                            @else
+                                            <span class="text-muted small">-</span>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @empty
+                                <tr>
+                                    <td colspan="8" class="text-center text-muted py-4">
+                                        <i class="fas fa-inbox fa-2x mb-2 opacity-25"></i>
+                                        <p class="mb-0">Chưa có học phần nào được gán vào khối kiến thức</p>
+                                    </td>
+                                </tr>
+                            @endforelse
+                            
+                            {{-- Show warning for orphan courses --}}
+                            @if($orphanHocPhans->isNotEmpty())
+                                <tr>
+                                    <td colspan="8" class="text-center text-danger bg-danger bg-opacity-10 py-3">
+                                        <i class="fas fa-exclamation-triangle me-2"></i>
+                                        <strong>Cảnh báo:</strong> Có {{ $orphanHocPhans->count() }} học phần chưa được gán vào khối kiến thức hợp lệ. 
+                                        Vui lòng kiểm tra lại dữ liệu.
+                                    </td>
+                                </tr>
+                            @endif
+                        </tbody>
+                        <tfoot>
+                            <tr class="table-light fw-bold">
+                                <td colspan="5" class="text-end">Tổng cộng:</td>
+                                <td class="text-center">
+                                    <span class="badge bg-success">{{ $totalCredits }} TC</span>
+                                </td>
+                                <td colspan="2" class="text-center">
+                                    {{ $totalCourses }} học phần | {{ $sortedKhoiGroups->count() }} khối kiến thức
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                
+                <style>
+                    .curriculum-table {
+                        font-size: 0.9rem;
+                    }
+                    
+                    .curriculum-table thead th {
+                        font-weight: 600;
+                        font-size: 0.85rem;
+                        vertical-align: middle;
+                        background-color: #fff3cd;
+                        border-color: #dee2e6;
+                    }
+                    
+                    .curriculum-table tbody tr {
+                        transition: background-color 0.15s ease;
+                    }
+                    
+                    .curriculum-table tbody tr:hover {
+                        background-color: #f8f9fa;
+                    }
+                    
+                    .curriculum-table tbody td {
+                        vertical-align: middle;
+                        border-color: #dee2e6;
+                    }
+                    
+                    .curriculum-table tbody td.bg-light {
+                        background-color: #f8f9fa !important;
+                    }
+                    
+                    .curriculum-table tfoot td {
+                        border-top: 2px solid #dee2e6;
+                    }
+                    
+                    .curriculum-table a:hover {
+                        text-decoration: underline !important;
+                    }
+                </style>
             </div>
         </div>
     </div>

@@ -86,4 +86,28 @@ class UserController extends Controller
 
         return redirect()->route('users.index')->with('success', 'Xóa người dùng thành công');
     }
+
+    public function toggleActive(User $user)
+    {
+        $this->authorize('update', $user);
+
+        // Prevent locking own account
+        if ($user->id === auth()->id()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Không thể khóa tài khoản đang sử dụng'
+            ], 400);
+        }
+
+        $user->active = !$user->active;
+        $user->save();
+
+        $action = $user->active ? 'mở khóa' : 'khóa';
+
+        return response()->json([
+            'success' => true,
+            'message' => "Đã {$action} tài khoản thành công",
+            'active' => $user->active
+        ]);
+    }
 }

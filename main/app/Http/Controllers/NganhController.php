@@ -27,7 +27,6 @@ class NganhController extends Controller
 
         $nganh = Nganh::create($validated);
 
-
         return redirect()->route('nganh.show', $nganh)->with('success', 'Tạo ngành thành công');
     }
 
@@ -51,15 +50,47 @@ class NganhController extends Controller
 
         $nganh->update($validated);
 
-
         return redirect()->route('nganh.show', $nganh)->with('success', 'Cập nhật ngành thành công');
     }
 
     public function destroy(Nganh $nganh)
     {
-        $nganh->delete();
+        // BR1: Check if nganh has active CTDTs
+        $activeCTDTs = $nganh->chuongTrinhDaoTaos()
+            ->whereIn('trang_thai', ['cho_phe_duyet', 'da_phe_duyet'])
+            ->count();
 
+        if ($activeCTDTs > 0) {
+            return redirect()->route('nganh.index')
+                ->with('error', "Không thể xóa ngành. Còn {$activeCTDTs} chương trình đào tạo đang hoạt động.");
+        }
 
-        return redirect()->route('nganh.index')->with('success', 'Xóa ngành thành công');
+        // BR2: Soft delete - mark as inactive instead of deleting
+        $nganh->update(['active' => false]);
+
+        return redirect()->route('nganh.index')
+            ->with('success', 'Đã ngừng hoạt động ngành. Dữ liệu lịch sử được giữ nguyên.');
+    }
+
+    public function toggleActive(Nganh $nganh)
+    {
+        // If deactivating, check constraints
+        if ($nganh->active && !$nganh->canBeDeactivated()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Không thể ngừng hoạt động ngành này. Còn chương trình đào tạo đang hoạt động.'
+            ], 422);
+        }
+
+        $nganh->active = !$nganh->active;
+        $nganh->save();
+
+        $status = $nganh->active ? 'Hoạt động' : 'Ngừng hoạt động';
+
+        return response()->json([
+            'success' => true,
+            'active' => $nganh->active,
+            'message' => "Đã chuyển ngành sang trạng thái: {$status}"
+        ]);
     }
 }

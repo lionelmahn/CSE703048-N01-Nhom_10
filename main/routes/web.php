@@ -88,8 +88,12 @@ Route::middleware('auth')->group(function () {
         Route::resource('khoa', KhoaController::class);
         Route::resource('bo-mon', BoMonController::class);
         Route::resource('users', UserController::class);
+        Route::post('users/{user}/toggle-active', [UserController::class, 'toggleActive'])
+            ->name('users.toggle-active');
         Route::resource('he-dao-tao', HeDaoTaoController::class);
         Route::resource('nganh', NganhController::class);
+        Route::post('nganh/{nganh}/toggle-active', [NganhController::class, 'toggleActive'])
+            ->name('nganh.toggle-active');
         Route::resource('nien-khoa', NienKhoaController::class);
         Route::resource('chuyen-nganh', ChuyenNganhController::class);
         Route::resource('khoa-hoc', KhoaHocController::class);

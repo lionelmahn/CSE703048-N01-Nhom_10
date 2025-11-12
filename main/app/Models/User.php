@@ -17,6 +17,7 @@ class User extends Authenticatable
         'password',
         'khoa_id',
         'role',
+        'active',
     ];
 
     protected $hidden = [
@@ -27,6 +28,7 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'active' => 'boolean',
     ];
 
     public function khoa(): BelongsTo
@@ -52,5 +54,10 @@ class User extends Authenticatable
     public function isSinhVien(): bool
     {
         return $this->role === 'sinh_vien';
+    }
+
+    public function isActive(): bool
+    {
+        return $this->active === true;
     }
 }
