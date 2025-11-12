@@ -19,6 +19,7 @@ use App\Http\Controllers\KhoiKienThucController;
 use App\Http\Controllers\BacHocController;
 use App\Http\Controllers\LoaiHinhDaoTaoController;
 use App\Http\Controllers\CtdtHocPhanController;
+use App\Http\Controllers\CtdtRangBuocController;
 
 // Redirect root to dashboard
 Route::redirect('/', '/dashboard');
@@ -71,6 +72,11 @@ Route::middleware('auth')->group(function () {
             ->name('structure');
         Route::post('/save-changes', [CtdtHocPhanController::class, 'saveChanges'])
             ->name('save-changes');
+
+        // Rang Buoc routes
+        Route::get('/rang-buoc', [CtdtRangBuocController::class, 'index'])->name('rang-buoc');
+        Route::get('/rang-buoc/{hocPhanId}', [CtdtRangBuocController::class, 'getRangBuoc'])->name('rang-buoc.get');
+        Route::post('/rang-buoc/save', [CtdtRangBuocController::class, 'saveChanges'])->name('rang-buoc.save');
     });
 
     // Học phần routes (all roles)

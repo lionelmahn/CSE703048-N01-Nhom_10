@@ -150,6 +150,10 @@
                 <a href="{{ route('ctdt.manage-hoc-phan', $ctdt->id) }}" class="btn btn-primary">
                     <i class="bi bi-gear"></i> Quản lý học phần
                 </a>
+                <!-- Adding button to manage rang buoc -->
+                <a href="{{ route('ctdt.rang-buoc', $ctdt->id) }}" class="btn btn-info">
+                    <i class="bi bi-diagram-3"></i> Ràng buộc học phần
+                </a>
                 <form method="POST" action="{{ route('ctdt.clone', $ctdt) }}" style="display: inline;">
                     @csrf
                     <button type="submit" class="btn btn-info w-100" onclick="return confirm('Sao chép CTĐT?');">

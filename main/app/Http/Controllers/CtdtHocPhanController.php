@@ -45,12 +45,12 @@ class CtdtHocPhanController extends Controller
         $query = HocPhan::with(['khoa', 'boMon'])
             ->where('active', true);
 
-        // Search by name or code
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('ten_hp', 'like', "%{$search}%")
-                    ->orWhere('ma_hp', 'like', "%{$search}%");
+        // Search by name or code - support both 'search' and 'q' parameters
+        $searchTerm = $request->input('search') ?? $request->input('q');
+        if ($searchTerm) {
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('ten_hp', 'like', "%{$searchTerm}%")
+                    ->orWhere('ma_hp', 'like', "%{$searchTerm}%");
             });
         }
 
@@ -64,9 +64,20 @@ class CtdtHocPhanController extends Controller
             $query->where('bo_mon_id', $request->bo_mon_id);
         }
 
-        $hocPhans = $query->orderBy('ma_hp')->paginate(20);
+        $hocPhans = $query->orderBy('ma_hp')->limit(50)->get();
 
-        return response()->json($hocPhans);
+        return response()->json([
+            'data' => $hocPhans->map(function ($hp) {
+                return [
+                    'id' => $hp->id,
+                    'ma_hp' => $hp->ma_hp,
+                    'ten_hp' => $hp->ten_hp,
+                    'so_tinchi' => $hp->so_tinchi,
+                    'active' => $hp->active,
+                    'khoa' => $hp->khoa ? ['ten' => $hp->khoa->ten] : null
+                ];
+            })
+        ]);
     }
 
     /**
