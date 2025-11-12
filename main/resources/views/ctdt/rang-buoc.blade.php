@@ -87,7 +87,7 @@
             <div class="card-header bg-success text-white">
                 <h6 class="mb-0">Thiết lập ràng buộc</h6>
             </div>
-            <div class="card-body p-3 flex-grow-1 overflow-hidden d-flex flex-column" id="rang-buoc-panel">
+            <div class="card-body p-3 flex-grow-1 overflow-auto" id="rang-buoc-panel">
                 {{-- Empty state --}}
                 <div id="empty-state" class="text-center text-muted py-5">
                     <i class="bi bi-arrow-left-circle fs-1"></i>
@@ -95,54 +95,69 @@
                 </div>
                 
                 {{-- Content when hoc phan selected --}}
-                <div id="rang-buoc-content" class="d-none flex-grow-1 overflow-hidden d-flex flex-column">
+                <div id="rang-buoc-content" class="d-none">
                     {{-- Selected hoc phan info --}}
-                    <div class="alert alert-info mb-3">
+                    <div class="alert alert-info mb-2 py-2">
                         <strong>Đang thiết lập cho:</strong>
                         <div id="selected-hoc-phan-info"></div>
                     </div>
                     
-                    {{-- Phần 2.A: Form Nguồn - Thêm ràng buộc --}}
+                    {{-- Compact form with collapsible business rules --}}
                     <div class="card mb-3">
-                        <div class="card-header bg-light">
+                        <div class="card-header bg-light py-2">
                             <h6 class="mb-0">Thêm ràng buộc</h6>
                         </div>
-                        <div class="card-body">
-                            <div class="alert alert-info small mb-3">
-                                <strong>Quy tắc nghiệp vụ:</strong>
-                                <ul class="mb-0 small">
-                                    <li><strong>BR1:</strong> Học phần ràng buộc tìm từ toàn hệ thống (không giới hạn trong CTĐT)</li>
-                                    <li><strong>BR3:</strong> Học phần không thể tự ràng buộc với chính nó</li>
-                                    <li><strong>BR2:</strong> Hệ thống sẽ kiểm tra và ngăn ràng buộc vòng khi lưu</li>
-                                    <li><strong>BR4:</strong> Ràng buộc "thay thế" tự động tạo quan hệ 2 chiều</li>
-                                </ul>
+                        <div class="card-body p-2">
+                            {{-- Collapsible business rules alert --}}
+                            <div class="accordion mb-2" id="accordionBR">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed py-2 small" type="button" 
+                                                data-bs-toggle="collapse" data-bs-target="#collapseBR">
+                                            <i class="bi bi-info-circle me-2"></i>Quy tắc nghiệp vụ (BR1-4)
+                                        </button>
+                                    </h2>
+                                    <div id="collapseBR" class="accordion-collapse collapse" data-bs-parent="#accordionBR">
+                                        <div class="accordion-body p-2 small">
+                                            <ul class="mb-0" style="font-size: 0.85rem; padding-left: 1.2rem;">
+                                                <li><strong>BR1:</strong> Học phần ràng buộc tìm từ toàn hệ thống</li>
+                                                <li><strong>BR3:</strong> Học phần không thể tự ràng buộc với chính nó</li>
+                                                <li><strong>BR2:</strong> Hệ thống sẽ kiểm tra và ngăn ràng buộc vòng</li>
+                                                <li><strong>BR4:</strong> Ràng buộc "thay thế" tự động tạo quan hệ 2 chiều</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="mb-3">
-                                <label class="form-label">Học phần ràng buộc</label>
-                                <select class="form-select" id="search-hp-rang-buoc">
+                            
+                            {{-- Compact form fields --}}
+                            <div class="mb-2">
+                                <label class="form-label small mb-1">Học phần ràng buộc</label>
+                                <select class="form-select form-select-sm" id="search-hp-rang-buoc">
                                     <option value="">Tìm kiếm học phần...</option>
                                 </select>
-                                <small class="text-muted">Tìm từ toàn bộ hệ thống (BR1)</small>
                             </div>
-                            <div class="mb-3">
-                                <label class="form-label">Loại ràng buộc</label>
-                                <select class="form-select" id="loai-rang-buoc">
+                            <div class="mb-2">
+                                <label class="form-label small mb-1">Loại ràng buộc</label>
+                                <select class="form-select form-select-sm" id="loai-rang-buoc">
                                     <option value="">-- Chọn loại --</option>
                                     <option value="tien_quyet">Tiên quyết</option>
                                     <option value="song_hanh">Song hành</option>
                                     <option value="thay_the">Thay thế</option>
                                 </select>
                             </div>
-                            <button type="button" class="btn btn-primary" onclick="handleAddRangBuoc()">
+                            <button type="button" class="btn btn-primary btn-sm" onclick="handleAddRangBuoc()">
                                 <i class="bi bi-plus-circle"></i> Thêm
                             </button>
                         </div>
                     </div>
                     
-                    {{-- Phần 2.B: Kết quả - Danh sách ràng buộc hiện tại --}}
-                    <div class="flex-grow-1 overflow-auto">
-                        <h6 class="mb-2">Các ràng buộc hiện tại</h6>
-                        <div id="rang-buoc-list"></div>
+                    {{-- Larger area for current constraints --}}
+                    <div class="mb-2">
+                        <h6 class="mb-2">
+                            <i class="bi bi-list-check"></i> Các ràng buộc hiện tại
+                        </h6>
+                        <div id="rang-buoc-list" style="max-height: 400px; overflow-y: auto;"></div>
                     </div>
                 </div>
             </div>
@@ -203,6 +218,35 @@
 .badge-kieu {
     font-size: 0.85rem;
     padding: 0.35em 0.65em;
+}
+
+/* Better styling for compact layout */
+.accordion-button:not(.collapsed) {
+    background-color: #e7f3ff;
+    color: #004085;
+}
+
+.accordion-button:focus {
+    box-shadow: none;
+    border-color: rgba(0,0,0,.125);
+}
+
+#rang-buoc-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+#rang-buoc-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+#rang-buoc-list::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+#rang-buoc-list::-webkit-scrollbar-thumb:hover {
+    background: #555;
 }
 </style>
 @endpush
