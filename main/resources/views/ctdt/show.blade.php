@@ -54,63 +54,7 @@
 @endif
 
 <div class="row mb-4">
-    <div class="col-md-8">
-        <div class="card mb-3">
-            <div class="card-header bg-light">
-                <h6 class="mb-0">Thông tin chung</h6>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <small class="text-muted">Bậc học</small>
-                        <p>{{ $ctdt->bacHoc->ten ?? 'N/A' }}</p>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <small class="text-muted">Loại hình đào tạo</small>
-                        <p>{{ $ctdt->loaiHinhDaoTao->ten ?? 'N/A' }}</p>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <small class="text-muted">Hệ đào tạo</small>
-                        <p>{{ $ctdt->heDaoTao?->ten ?? 'N/A' }}</p>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <small class="text-muted">Khoa</small>
-                        <p>{{ $ctdt->khoa->ten ?? 'N/A' }}</p>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <small class="text-muted">Ngành</small>
-                        <p>{{ $ctdt->nganh->ten ?? 'N/A' }} ({{ $ctdt->nganh->ma ?? '' }})</p>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <small class="text-muted">Chuyên ngành</small>
-                        <p>{{ $ctdt->chuyenNganh?->ten ?? 'Đại trà' }}</p>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <small class="text-muted">Khóa học</small>
-                        <p>{{ $ctdt->khoaHoc->ma ?? 'N/A' }}</p>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <small class="text-muted">Niên khóa</small>
-                        <p>{{ $ctdt->nienKhoa->ma }} ({{ $ctdt->nienKhoa->nam_bat_dau }}-{{ $ctdt->nienKhoa->nam_ket_thuc }})</p>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <small class="text-muted">Hiệu lực từ</small>
-                        <p>{{ $ctdt->hieu_luc_tu->format('d/m/Y') }}</p>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <small class="text-muted">Hiệu lực đến</small>
-                        <p>{{ $ctdt->hieu_luc_den ? $ctdt->hieu_luc_den->format('d/m/Y') : 'N/A' }}</p>
-                    </div>
-                    @if ($ctdt->mo_ta)
-                    <div class="col-md-12">
-                        <small class="text-muted">Mô tả</small>
-                        <p>{{ $ctdt->mo_ta }}</p>
-                    </div>
-                    @endif
-                </div>
-            </div>
-        </div>
-        
+    <div class="col-lg-8">
         <div class="card">
             <div class="card-header bg-light d-flex justify-content-between align-items-center">
                 <h6 class="mb-0"><i class="fas fa-book-open me-2"></i>Khung chương trình</h6>
@@ -162,18 +106,6 @@
                     $totalCredits = $ctdt->ctdtHocPhans->sum(function($item) {
                         return $item->hocPhan->so_tinchi;
                     });
-                    
-                    if (env('APP_DEBUG')) {
-                        error_log("Total courses: " . $ctdt->ctdtHocPhans->count());
-                        error_log("Valid courses: " . $validHocPhans->count());
-                        error_log("Orphan courses: " . $orphanHocPhans->count());
-                        error_log("Knowledge blocks: " . $sortedKhoiGroups->count());
-                        
-                        foreach ($sortedKhoiGroups as $khoiId => $hocPhans) {
-                            $khoi = $hocPhans->first()->khoi;
-                            error_log("Rendering Khoi: " . ($khoi ? $khoi->ma : 'NULL') . " (ID: $khoiId) with " . $hocPhans->count() . " courses");
-                        }
-                    }
                 @endphp
                 
                 <div class="table-responsive">
@@ -197,10 +129,6 @@
                                     // Sort courses by thu_tu within each block
                                     $sortedHocPhans = $hocPhans->sortBy('thu_tu')->values();
                                     $totalInKhoi = $sortedHocPhans->count();
-                                    
-                                    if (env('APP_DEBUG')) {
-                                        error_log("Rendering Khoi: " . $khoi->ma . " (ID: $khoiId) with $totalInKhoi courses");
-                                    }
                                 @endphp
                                 
                                 @foreach($sortedHocPhans as $index => $ctdtHocPhan)
@@ -344,7 +272,7 @@
         </div>
     </div>
     
-    <div class="col-md-4">
+    <div class="col-lg-4">
         <div class="card mb-3">
             <div class="card-header bg-light">
                 <h6 class="mb-0">Hành động</h6>
@@ -384,6 +312,60 @@
                 <a href="{{ route('ctdt.index') }}" class="btn btn-outline-secondary">
                     <i class="bi bi-arrow-left"></i> Quay lại
                 </a>
+            </div>
+        </div>
+        
+        <div class="card mb-3">
+            <div class="card-header bg-light">
+                <h6 class="mb-0">Thông tin chung</h6>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <small class="text-muted d-block">Bậc học</small>
+                    <p class="mb-0">{{ $ctdt->bacHoc->ten ?? 'N/A' }}</p>
+                </div>
+                <div class="mb-3">
+                    <small class="text-muted d-block">Loại hình đào tạo</small>
+                    <p class="mb-0">{{ $ctdt->loaiHinhDaoTao->ten ?? 'N/A' }}</p>
+                </div>
+                <div class="mb-3">
+                    <small class="text-muted d-block">Hệ đào tạo</small>
+                    <p class="mb-0">{{ $ctdt->heDaoTao?->ten ?? 'N/A' }}</p>
+                </div>
+                <div class="mb-3">
+                    <small class="text-muted d-block">Khoa</small>
+                    <p class="mb-0">{{ $ctdt->khoa->ten ?? 'N/A' }}</p>
+                </div>
+                <div class="mb-3">
+                    <small class="text-muted d-block">Ngành</small>
+                    <p class="mb-0">{{ $ctdt->nganh->ten ?? 'N/A' }} ({{ $ctdt->nganh->ma ?? '' }})</p>
+                </div>
+                <div class="mb-3">
+                    <small class="text-muted d-block">Chuyên ngành</small>
+                    <p class="mb-0">{{ $ctdt->chuyenNganh?->ten ?? 'Đại trà' }}</p>
+                </div>
+                <div class="mb-3">
+                    <small class="text-muted d-block">Khóa học</small>
+                    <p class="mb-0">{{ $ctdt->khoaHoc->ma ?? 'N/A' }}</p>
+                </div>
+                <div class="mb-3">
+                    <small class="text-muted d-block">Niên khóa</small>
+                    <p class="mb-0">{{ $ctdt->nienKhoa->ma }} ({{ $ctdt->nienKhoa->nam_bat_dau }}-{{ $ctdt->nienKhoa->nam_ket_thuc }})</p>
+                </div>
+                <div class="mb-3">
+                    <small class="text-muted d-block">Hiệu lực từ</small>
+                    <p class="mb-0">{{ $ctdt->hieu_luc_tu->format('d/m/Y') }}</p>
+                </div>
+                <div class="mb-3">
+                    <small class="text-muted d-block">Hiệu lực đến</small>
+                    <p class="mb-0">{{ $ctdt->hieu_luc_den ? $ctdt->hieu_luc_den->format('d/m/Y') : 'N/A' }}</p>
+                </div>
+                @if ($ctdt->mo_ta)
+                <div>
+                    <small class="text-muted d-block">Mô tả</small>
+                    <p class="mb-0">{{ $ctdt->mo_ta }}</p>
+                </div>
+                @endif
             </div>
         </div>
         
