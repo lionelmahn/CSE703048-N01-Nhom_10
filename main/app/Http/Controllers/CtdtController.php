@@ -243,13 +243,35 @@ class CtdtController extends Controller
     {
         $this->authorize('update', $ctdt);
 
-        if ($ctdt->trang_thai !== 'draft') {
-            return back()->with('error', 'Chỉ có thể gửi duyệt CTĐT ở trạng thái nháp');
+        // BR3: Chỉ cho phép gửi nếu ở trạng thái "draft" hoặc "can_chinh_sua"
+        if (!in_array($ctdt->trang_thai, ['draft', 'can_chinh_sua'])) {
+            return back()->with('error', 'Chỉ có thể gửi phê duyệt CTĐT ở trạng thái "Bản nháp" hoặc "Cần chỉnh sửa".');
         }
 
-        $ctdt->update(['trang_thai' => 'pending']);
+        // BR1: Validation - Tổng tín chỉ tối thiểu (ví dụ: 120 tín chỉ)
+        $tongTinChi = $ctdt->ctdtHocPhans()->with('hocPhan')->get()->sum(function ($item) {
+            return $item->hocPhan->so_tinchi;
+        });
 
+        $minTinChi = 20; // Có thể config theo bậc học
+        if ($tongTinChi < $minTinChi) {
+            return back()->with('error', "Không thể gửi: Tổng tín chỉ ($tongTinChi) chưa đạt mức tối thiểu ($minTinChi).");
+        }
 
-        return back()->with('success', 'Gửi phê duyệt thành công');
+        // BR2: Validation - Phải có đầy đủ khối kiến thức
+        $soKhoiCoHocPhan = $ctdt->ctdtHocPhans()->distinct('khoi_id')->count('khoi_id');
+        if ($soKhoiCoHocPhan < 1) {
+            return back()->with('error', 'Không thể gửi: Chưa có học phần nào được thêm vào CTĐT.');
+        }
+
+        // BR4: Chuyển trạng thái sang "Chờ phê duyệt"
+        $ctdt->update([
+            'trang_thai' => 'cho_phe_duyet',
+            'ly_do_tra_ve' => null // Xóa lý do từ chối cũ nếu có
+        ]);
+
+        // TODO: Gửi notification đến người phê duyệt (BR6)
+
+        return back()->with('success', 'Đã gửi phê duyệt thành công. CTĐT đã bị khóa và chờ xét duyệt.');
     }
 }

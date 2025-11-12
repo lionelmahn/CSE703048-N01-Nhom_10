@@ -15,8 +15,9 @@ class CtdtApprovalController extends Controller
 
     public function pending()
     {
-        $ctdts = ChuongTrinhDaoTao::where('trang_thai', 'pending')
-            ->with(['khoa', 'nganh', 'nienKhoa', 'nguoiTao', 'heDaoTao', 'chuyenNganh'])
+        $ctdts = ChuongTrinhDaoTao::where('trang_thai', 'cho_phe_duyet')
+            ->with(['khoa', 'nganh', 'nienKhoa', 'nguoiTao', 'heDaoTao', 'chuyenNganh', 'bacHoc', 'loaiHinhDaoTao', 'khoaHoc'])
+            ->orderBy('updated_at', 'desc')
             ->paginate(15);
 
         return view('ctdt-approval.pending', compact('ctdts'));
@@ -26,21 +27,29 @@ class CtdtApprovalController extends Controller
     {
         $this->authorize('approve', $ctdt);
 
-        if ($ctdt->trang_thai !== 'pending') {
-            return back()->with('error', 'Chỉ có thể phê duyệt CTĐT ở trạng thái chờ duyệt');
+        // BR3: Only allow approve if status is "Chờ phê duyệt"
+        if ($ctdt->trang_thai !== 'cho_phe_duyet') {
+            return back()->with('error', 'Chỉ có thể phê duyệt CTĐT ở trạng thái "Chờ phê duyệt".');
         }
 
-        $ctdt->update(['trang_thai' => 'approved']);
+        // BR4: Update to "Đã phê duyệt" and lock permanently
+        $ctdt->update([
+            'trang_thai' => 'da_phe_duyet',
+            'approved_by' => Auth::id(),
+            'approved_at' => now(),
+            'ly_do_tra_ve' => null,
+        ]);
 
+        // TODO: Send notification to Khoa
 
-        return back()->with('success', 'Phê duyệt CTĐT thành công');
+        return back()->with('success', 'Đã phê duyệt thành công. CTĐT đã được ban hành và bị khóa vĩnh viễn.');
     }
 
     public function publish(ChuongTrinhDaoTao $ctdt)
     {
         $this->authorize('publish', $ctdt);
 
-        if ($ctdt->trang_thai !== 'approved') {
+        if ($ctdt->trang_thai !== 'da_phe_duyet') {
             return back()->with('error', 'Chỉ có thể công bố CTĐT đã được phê duyệt');
         }
 
@@ -54,11 +63,27 @@ class CtdtApprovalController extends Controller
     {
         $this->authorize('approve', $ctdt);
 
-        $request->validate(['ly_do' => 'required|string|max:500']);
+        // BR3: Only allow reject if status is "Chờ phê duyệt"
+        if ($ctdt->trang_thai !== 'cho_phe_duyet') {
+            return back()->with('error', 'Chỉ có thể yêu cầu chỉnh sửa CTĐT ở trạng thái "Chờ phê duyệt".');
+        }
 
-        $ctdt->update(['trang_thai' => 'draft']);
+        // BR2: Validation - lý do bắt buộc
+        $request->validate([
+            'ly_do_tra_ve' => 'required|string|min:10',
+        ], [
+            'ly_do_tra_ve.required' => 'Vui lòng nhập nội dung yêu cầu chỉnh sửa.',
+            'ly_do_tra_ve.min' => 'Nội dung yêu cầu chỉnh sửa phải có ít nhất 10 ký tự.',
+        ]);
 
+        // BR5: Update to "Cần chỉnh sửa" and unlock for Khoa
+        $ctdt->update([
+            'trang_thai' => 'can_chinh_sua',
+            'ly_do_tra_ve' => $request->ly_do_tra_ve,
+        ]);
 
-        return back()->with('success', 'Từ chối CTĐT thành công');
+        // TODO: Send notification to Khoa with reason
+
+        return back()->with('success', 'Đã gửi yêu cầu chỉnh sửa thành công. CTĐT đã được mở khóa cho Khoa.');
     }
 }

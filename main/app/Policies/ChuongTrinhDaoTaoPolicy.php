@@ -36,7 +36,7 @@ class ChuongTrinhDaoTaoPolicy
             return false;
         }
 
-        return in_array($ctdt->trang_thai, ['draft', 'pending', 'approved']);
+        return in_array($ctdt->trang_thai, ['draft', 'can_chinh_sua']);
     }
 
     public function delete(User $user, ChuongTrinhDaoTao $ctdt): bool
@@ -54,11 +54,15 @@ class ChuongTrinhDaoTaoPolicy
 
     public function sendForApproval(User $user, ChuongTrinhDaoTao $ctdt): bool
     {
-        if ($user->role !== 'khoa' || $user->khoa_id != $ctdt->khoa_id) {
+        if (!in_array($user->role, ['admin', 'khoa'])) {
             return false;
         }
 
-        return $ctdt->trang_thai === 'draft';
+        if ($user->role === 'khoa' && $user->khoa_id != $ctdt->khoa_id) {
+            return false;
+        }
+
+        return in_array($ctdt->trang_thai, ['draft', 'can_chinh_sua']);
     }
 
     public function approve(User $user, ChuongTrinhDaoTao $ctdt): bool
@@ -67,7 +71,7 @@ class ChuongTrinhDaoTaoPolicy
             return false;
         }
 
-        return $ctdt->trang_thai === 'pending';
+        return $ctdt->trang_thai === 'cho_phe_duyet';
     }
 
     public function publish(User $user, ChuongTrinhDaoTao $ctdt): bool
@@ -76,7 +80,7 @@ class ChuongTrinhDaoTaoPolicy
             return false;
         }
 
-        return $ctdt->trang_thai === 'approved';
+        return $ctdt->trang_thai === 'da_phe_duyet';
     }
 
     public function rejectForRevision(User $user, ChuongTrinhDaoTao $ctdt): bool
@@ -85,6 +89,6 @@ class ChuongTrinhDaoTaoPolicy
             return false;
         }
 
-        return $ctdt->trang_thai === 'pending';
+        return $ctdt->trang_thai === 'cho_phe_duyet';
     }
 }

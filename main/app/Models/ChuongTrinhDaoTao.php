@@ -26,12 +26,16 @@ class ChuongTrinhDaoTao extends Model
         'hieu_luc_den',
         'mo_ta',
         'created_by',
-        'ly_do_tra_ve'
+        'ly_do_tra_ve',
+        'approved_by',
+        'approved_at',
+        'ghi_chu_phe_duyet'
     ];
 
     protected $casts = [
         'hieu_luc_tu' => 'date',
         'hieu_luc_den' => 'date',
+        'approved_at' => 'datetime',
     ];
 
     public function bacHoc(): BelongsTo
@@ -77,6 +81,11 @@ class ChuongTrinhDaoTao extends Model
     public function nguoiTao(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function nguoiPheDuyet(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'approved_by');
     }
 
     public function ctdtKhois(): HasMany

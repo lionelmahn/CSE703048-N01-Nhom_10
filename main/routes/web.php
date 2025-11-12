@@ -44,7 +44,6 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:admin')->prefix('ctdt-approval')->name('ctdt-approval.')->group(function () {
         Route::get('/pending', [CtdtApprovalController::class, 'pending'])->name('pending');
         Route::post('/{ctdt}/approve', [CtdtApprovalController::class, 'approve'])->name('approve');
-        Route::post('/{ctdt}/publish', [CtdtApprovalController::class, 'publish'])->name('publish');
         Route::post('/{ctdt}/reject', [CtdtApprovalController::class, 'reject'])->name('reject');
     });
 
