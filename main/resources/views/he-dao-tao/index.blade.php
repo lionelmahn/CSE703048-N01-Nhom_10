@@ -43,23 +43,25 @@
                                 </td>
                                 <td>{{ $he->created_at->format('d/m/Y') }}</td>
                                 <td class="text-end">
-                                    <div class="btn-group btn-group-sm">
+                                    <div class="btn-group btn-group-sm" role="group">
                                         @can('update', $he)
-                                            <a href="{{ route('he-dao-tao.edit', $he) }}" class="btn btn-outline-primary">
+                                            <a href="{{ route('he-dao-tao.edit', $he) }}" class="btn btn-warning">
                                                 <i class="fas fa-edit"></i>
                                             </a>
                                         @endcan
                                         @can('delete', $he)
-                                            <form action="{{ route('he-dao-tao.destroy', $he) }}" method="POST" class="d-inline" 
-                                                  onsubmit="return confirm('Bạn có chắc chắn muốn xóa?');">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-outline-danger">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
-                                            </form>
+                                            <button type="button" class="btn btn-danger" 
+                                                    onclick="if(confirm('Bạn có chắc chắn muốn xóa?')) document.getElementById('delete-form-{{ $he->id }}').submit();">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
                                         @endcan
                                     </div>
+                                    @can('delete', $he)
+                                        <form id="delete-form-{{ $he->id }}" action="{{ route('he-dao-tao.destroy', $he) }}" method="POST" style="display: none;">
+                                            @csrf
+                                            @method('DELETE')
+                                        </form>
+                                    @endcan
                                 </td>
                             </tr>
                         @empty

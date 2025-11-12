@@ -6,7 +6,7 @@
         <h1 class="h3 mb-0">Quản lý Người dùng</h1>
         @can('create', App\Models\User::class)
         <a href="{{ route('users.create') }}" class="btn btn-primary">
-            <i class="bi bi-plus-circle"></i> Thêm người dùng
+            <i class="fas fa-plus-circle"></i> Thêm người dùng
         </a>
         @endcan
     </div>
@@ -53,19 +53,24 @@
                             <td>{{ $user->khoa?->ten ?? '-' }}</td>
                             <td>{{ $user->created_at->format('d/m/Y') }}</td>
                             <td>
-                                @can('update', $user)
-                                <a href="{{ route('users.edit', $user) }}" class="btn btn-sm btn-outline-primary">
-                                    <i class="bi bi-pencil"></i>
-                                </a>
-                                @endcan
+                                <div class="btn-group" role="group">
+                                    @can('update', $user)
+                                    <a href="{{ route('users.edit', $user) }}" class="btn btn-sm btn-warning">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    @endcan
+                                    @can('delete', $user)
+                                    <button type="button" class="btn btn-sm btn-danger" 
+                                        onclick="if(confirm('Bạn có chắc muốn xóa người dùng này?')) document.getElementById('delete-form-{{ $user->id }}').submit()">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                    @endcan
+                                </div>
+                                
                                 @can('delete', $user)
-                                <form action="{{ route('users.destroy', $user) }}" method="POST" class="d-inline">
+                                <form id="delete-form-{{ $user->id }}" action="{{ route('users.destroy', $user) }}" method="POST" style="display: none;">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-outline-danger" 
-                                        onclick="return confirm('Bạn có chắc muốn xóa người dùng này?')">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
                                 </form>
                                 @endcan
                             </td>

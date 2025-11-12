@@ -54,17 +54,21 @@
                         <span class="badge bg-secondary">{{ $ctdt->khoaHoc?->ma ?? 'N/A' }}</span>
                     </td>
                     <td>
+                        {{-- Updated status map với status mới và màu sắc phân biệt --}}
                         @php
                             $statusMap = [
-                                'draft' => ['class' => 'secondary', 'text' => 'Bản nháp'],
-                                'pending' => ['class' => 'warning', 'text' => 'Chờ duyệt'],
-                                'approved' => ['class' => 'success', 'text' => 'Đã duyệt'],
-                                'published' => ['class' => 'primary', 'text' => 'Đã công bố'],
-                                'archived' => ['class' => 'dark', 'text' => 'Lưu trữ'],
+                                'draft' => ['class' => 'secondary', 'text' => 'Bản nháp', 'icon' => 'fa-file-alt'],
+                                'can_chinh_sua' => ['class' => 'warning text-dark', 'text' => 'Cần chỉnh sửa', 'icon' => 'fa-edit'],
+                                'cho_phe_duyet' => ['class' => 'info', 'text' => 'Chờ phê duyệt', 'icon' => 'fa-clock'],
+                                'da_phe_duyet' => ['class' => 'success', 'text' => 'Đã phê duyệt', 'icon' => 'fa-check-circle'],
+                                'published' => ['class' => 'primary', 'text' => 'Đã công bố', 'icon' => 'fa-globe'],
+                                'archived' => ['class' => 'dark', 'text' => 'Lưu trữ', 'icon' => 'fa-archive'],
                             ];
-                            $status = $statusMap[$ctdt->trang_thai] ?? ['class' => 'secondary', 'text' => $ctdt->trang_thai];
+                            $status = $statusMap[$ctdt->trang_thai] ?? ['class' => 'secondary', 'text' => $ctdt->trang_thai, 'icon' => 'fa-question'];
                         @endphp
-                        <span class="badge bg-{{ $status['class'] }}">{{ $status['text'] }}</span>
+                        <span class="badge bg-{{ $status['class'] }}">
+                            <i class="fas {{ $status['icon'] }}"></i> {{ $status['text'] }}
+                        </span>
                     </td>
                     <td>{{ $ctdt->hieu_luc_tu?->format('d/m/Y') ?? 'N/A' }}</td>
                     <td>

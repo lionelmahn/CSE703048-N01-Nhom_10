@@ -40,23 +40,23 @@
                             <td>{{ $boMon->khoa->ten ?? 'N/A' }}</td>
                             <td>{{ Str::limit($boMon->mo_ta, 50) }}</td>
                             <td>
-                                <div class="btn-group btn-group-sm">
-                                    <a href="{{ route('bo-mon.show', $boMon) }}" class="btn btn-outline-info" title="Xem">
-                                        <i class="bi bi-eye"></i>
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <a href="{{ route('bo-mon.show', $boMon) }}" class="btn btn-info" title="Xem">
+                                        <i class="fas fa-eye"></i>
                                     </a>
                                     @can('update', $boMon)
-                                        <a href="{{ route('bo-mon.edit', $boMon) }}" class="btn btn-outline-primary" title="Sửa">
-                                            <i class="bi bi-pencil"></i>
+                                        <a href="{{ route('bo-mon.edit', $boMon) }}" class="btn btn-warning" title="Sửa">
+                                            <i class="fas fa-edit"></i>
                                         </a>
                                     @endcan
                                     @can('delete', $boMon)
-                                        <form action="{{ route('bo-mon.destroy', $boMon) }}" method="POST" class="d-inline">
+                                        <button type="button" class="btn btn-danger" title="Xóa"
+                                            onclick="if(confirm('Bạn có chắc chắn muốn xóa bộ môn này?')) { document.getElementById('delete-form-{{ $boMon->id }}').submit(); }">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                        <form id="delete-form-{{ $boMon->id }}" action="{{ route('bo-mon.destroy', $boMon) }}" method="POST" style="display: none;">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-outline-danger" title="Xóa"
-                                                onclick="return confirm('Bạn có chắc chắn muốn xóa bộ môn này?')">
-                                                <i class="bi bi-trash"></i>
-                                            </button>
                                         </form>
                                     @endcan
                                 </div>

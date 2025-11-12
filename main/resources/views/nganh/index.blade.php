@@ -6,7 +6,7 @@
         <h1 class="h3 mb-0">Quản lý Ngành</h1>
         @can('create', App\Models\Nganh::class)
         <a href="{{ route('nganh.create') }}" class="btn btn-primary">
-            <i class="bi bi-plus-circle"></i> Thêm ngành mới
+            <i class="fas fa-plus-circle"></i> Thêm ngành mới
         </a>
         @endcan
     </div>
@@ -26,7 +26,6 @@
                         <tr>
                             <th>Mã ngành</th>
                             <th>Tên ngành</th>
-                            {{-- Removed Hệ đào tạo column --}}
                             <th>Số CTĐT</th>
                             <th>Thao tác</th>
                         </tr>
@@ -40,30 +39,33 @@
                                     {{ $nganh->ten }}
                                 </a>
                             </td>
-                            {{-- Removed Hệ đào tạo display --}}
                             <td>
                                 <span class="badge bg-secondary">{{ $nganh->chuongTrinhDaoTaos->count() }}</span>
                             </td>
                             <td>
+                                {{-- Converted to button group with Font Awesome icons and solid colors --}}
                                 <div class="btn-group btn-group-sm" role="group">
-                                    <a href="{{ route('nganh.show', $nganh) }}" class="btn btn-outline-info" title="Xem">
-                                        <i class="bi bi-eye"></i>
+                                    <a href="{{ route('nganh.show', $nganh) }}" class="btn btn-info" title="Xem">
+                                        <i class="fas fa-eye"></i>
                                     </a>
                                     @can('update', $nganh)
-                                    <a href="{{ route('nganh.edit', $nganh) }}" class="btn btn-outline-primary" title="Sửa">
-                                        <i class="bi bi-pencil"></i>
+                                    <a href="{{ route('nganh.edit', $nganh) }}" class="btn btn-warning" title="Sửa">
+                                        <i class="fas fa-edit"></i>
                                     </a>
                                     @endcan
                                     @can('delete', $nganh)
-                                    <form action="{{ route('nganh.destroy', $nganh) }}" method="POST" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn xóa ngành này?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-outline-danger" title="Xóa">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </form>
+                                    <button type="button" class="btn btn-danger" title="Xóa" onclick="document.getElementById('delete-form-{{ $nganh->id }}').submit();">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
                                     @endcan
                                 </div>
+                                
+                                @can('delete', $nganh)
+                                <form id="delete-form-{{ $nganh->id }}" action="{{ route('nganh.destroy', $nganh) }}" method="POST" style="display: none;" onsubmit="return confirm('Bạn có chắc chắn muốn xóa ngành này?')">
+                                    @csrf
+                                    @method('DELETE')
+                                </form>
+                                @endcan
                             </td>
                         </tr>
                         @empty

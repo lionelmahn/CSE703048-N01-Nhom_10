@@ -8,6 +8,7 @@ use App\Models\BoMon;
 use App\Http\Requests\StoreHocPhanRequest;
 use App\Http\Requests\UpdateHocPhanRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class HocPhanController extends Controller
 {
@@ -96,5 +97,25 @@ class HocPhanController extends Controller
 
 
         return redirect()->route('hoc-phan.index')->with('success', 'Xóa học phần thành công');
+    }
+
+    public function toggleActive(HocPhan $hocPhan)
+    {
+        $this->authorize('update', $hocPhan);
+
+        Log::info("[v0] Toggle active for HocPhan ID: {$hocPhan->id}, Current status: " . ($hocPhan->active ? 'active' : 'inactive'));
+
+        $hocPhan->active = !$hocPhan->active;
+        $hocPhan->save();
+
+        Log::info("[v0] HocPhan ID: {$hocPhan->id} toggled to: " . ($hocPhan->active ? 'active' : 'inactive'));
+
+        $status = $hocPhan->active ? 'kích hoạt' : 'tắt hoạt động';
+
+        return response()->json([
+            'success' => true,
+            'active' => $hocPhan->active,
+            'message' => "Đã {$status} học phần thành công"
+        ]);
     }
 }

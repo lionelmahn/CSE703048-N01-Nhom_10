@@ -7,7 +7,7 @@
     <h2>Quản lý Niên khóa</h2>
     @can('create', App\Models\NienKhoa::class)
     <a href="{{ route('nien-khoa.create') }}" class="btn btn-primary">
-        <i class="bi bi-plus-circle"></i> Thêm Niên khóa
+        <i class="fas fa-plus-circle"></i> Thêm Niên khóa
     </a>
     @endcan
 </div>
@@ -46,26 +46,32 @@
                             </span>
                         </td>
                         <td>
-                            <div class="btn-group btn-group-sm">
+                            <div class="btn-group btn-group-sm" role="group">
                                 @can('update', $nienKhoa)
                                 <a href="{{ route('nien-khoa.edit', $nienKhoa) }}" 
-                                   class="btn btn-outline-primary">
-                                    <i class="bi bi-pencil"></i>
+                                   class="btn btn-warning">
+                                    <i class="fas fa-edit"></i>
                                 </a>
                                 @endcan
                                 
                                 @can('delete', $nienKhoa)
-                                <form action="{{ route('nien-khoa.destroy', $nienKhoa) }}" 
-                                      method="POST" 
-                                      onsubmit="return confirm('Xác nhận xóa niên khóa này?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-outline-danger">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </form>
+                                <button type="button" class="btn btn-danger" 
+                                        onclick="document.getElementById('delete-form-{{ $nienKhoa->id }}').submit();">
+                                    <i class="fas fa-trash"></i>
+                                </button>
                                 @endcan
                             </div>
+                            
+                            @can('delete', $nienKhoa)
+                            <form id="delete-form-{{ $nienKhoa->id }}" 
+                                  action="{{ route('nien-khoa.destroy', $nienKhoa) }}" 
+                                  method="POST" 
+                                  style="display: none;"
+                                  onsubmit="return confirm('Xác nhận xóa niên khóa này?')">
+                                @csrf
+                                @method('DELETE')
+                            </form>
+                            @endcan
                         </td>
                     </tr>
                     @empty

@@ -80,6 +80,8 @@ Route::middleware('auth')->group(function () {
 
     // Học phần routes (all roles)
     Route::resource('hoc-phan', HocPhanController::class);
+    Route::post('hoc-phan/{hocPhan}/toggle-active', [HocPhanController::class, 'toggleActive'])
+        ->name('hoc-phan.toggle-active');
 
     // Admin only routes
     Route::middleware('role:admin')->group(function () {
