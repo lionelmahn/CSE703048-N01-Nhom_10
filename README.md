@@ -23,6 +23,25 @@
 | Nguyễn Văn Mạnh   | 23010559     | 23010559@st.phenikaa-uni.edu.vn             |
 
 ---
+## 🔐 Tài khoản DEMO
+
+Dùng để đăng nhập và trải nghiệm hệ thống.
+
+> **Mật khẩu mặc định tất cả tài khoản:** `password`
+
+| Vai trò | Email |
+|--------|--------------------------------|
+| Admin | admin@example.com |
+| Khoa CNTT | khoa.cntt@example.com |
+| Khoa KT | khoa.kt@example.com |
+| Giảng viên 1 | gv1@example.com |
+| Giảng viên 2 | gv2@example.com |
+| Giảng viên 3 | gv3@example.com |
+| Sinh viên 1 | sv1@example.com |
+| Sinh viên 2 | sv2@example.com |
+| Sinh viên 3 | sv3@example.com |
+
+---
 ## 🧩 Mô tả dự án
 
 Hệ thống được xây dựng nhằm số hóa toàn bộ quy trình **thiết kế – phê duyệt – công bố** Chương trình Đào tạo (CTĐT) trong trường đại học.
