@@ -55,11 +55,12 @@ class CtdtController extends Controller
         $loaiHinhDaoTaos = LoaiHinhDaoTao::all();
         $heDaoTaos = HeDaoTao::all();
 
-        // If copy mode, get list of CTDTs to copy from
+        // If copy mode, get list of CTDTs to copy from (only approved or published)
         $ctdtsForCopy = [];
         if ($mode === 'copy') {
-            $ctdtsForCopy = ChuongTrinhDaoTao::whereIn('trang_thai', ['approved', 'published'])
+            $ctdtsForCopy = ChuongTrinhDaoTao::whereIn('trang_thai', ['da_phe_duyet', 'da_cong_bo'])
                 ->with(['bacHoc', 'loaiHinhDaoTao', 'nganh', 'chuyenNganh', 'khoaHoc'])
+                ->orderBy('updated_at', 'desc')
                 ->get();
         }
 
@@ -253,7 +254,7 @@ class CtdtController extends Controller
             return $item->hocPhan->so_tinchi;
         });
 
-        $minTinChi = 20; // Có thể config theo bậc học
+        $minTinChi = 120; // Có thể config theo bậc học
         if ($tongTinChi < $minTinChi) {
             return back()->with('error', "Không thể gửi: Tổng tín chỉ ($tongTinChi) chưa đạt mức tối thiểu ($minTinChi).");
         }
