@@ -1,6 +1,5 @@
 # CSE703048-1-1-25-N01-Nhom_10
 # 🎓 BÁO CÁO BÀI TẬP LỚN  
-<br>
 ## MÔN HỌC: PHÂN TÍCH VÀ THIẾT KẾ PHẦN MỀM  
 ### **ĐỀ TÀI: PHÁT TRIỂN PHẦN MỀM QUẢN LÝ CHƯƠNG TRÌNH ĐÀO TẠO**
 
