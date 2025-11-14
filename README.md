@@ -221,10 +221,14 @@ Hệ thống phục vụ 4 nhóm người dùng chính:
 
 ## 🛠️ Công nghệ sử dụng
 
-- **Back-end:** PHP & Laravel Framework  
-- **Front-end:** Blade template, Bootstrap / Tailwind CSS, JavaScript  
-- **Database:** MySQL  
-- **Quản lý mã nguồn:** Git / GitHub  
+-   **Laravel 10** với PHP 8.2+
+-   **MySQL 8.0+** (hoặc MariaDB)
+-   **Breeze**: Authentication (Tailwind CSS)
+-   **Bootstrap 5**: Dashboard UI (CDN)
+-   **Chart.js**: Biểu đồ (CDN)
+-   **Spatie Permission**: RBAC
+-   **Spatie Activity Log**: Audit trail
+-   **Maatwebsite Excel**: Import/Export
 
 ---
 

@@ -80,10 +80,11 @@ Truy cập: **http://localhost:8000**
 
 | Email           | Role       | Password | Ghi chú            |
 | --------------- | ---------- | -------- | ------------------ |
-| admin@demo.test | admin      | password | Toàn quyền         |
-| khoa@demo.test  | khoa       | password | Quản trị khoa CNTT |
-| gv@demo.test    | giang_vien | password | Giảng viên         |
-| sv@demo.test    | sinh_vien  | password | Sinh viên          |
+| admin@example.com | admin      | password | Toàn quyền         |
+| khoa.cntt@example.com  | khoa       | password | Quản trị khoa CNTT |
+| khoa.kt@example.com  | khoa       | password | Quản trị khoa Kinh tế |
+| gv1@example.com    | giang_vien | password | Giảng viên         |
+| sv1@example.com    | sinh_vien  | password | Sinh viên          |
 
 
 ## Phân Quyền
@@ -94,4 +95,3 @@ Truy cập: **http://localhost:8000**
 | **Khoa**       | CRUD CTĐT của khoa mình, quản lý học phần khoa       |
 | **Giảng viên** | Xem CTĐT/học phần (read-only)                        |
 | **Sinh viên**  | Xem CTĐT published (read-only)                       |
-
