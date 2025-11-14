@@ -5,7 +5,7 @@ Hệ thống web quản lý chương trình đào tạo dành cho các trường
 ## Tính Năng Chính
 
 -   **Quản lý tổ chức**: Khoa, Bộ môn, Hệ đào tạo, Ngành, Chuyên ngành
--   **Quản lý danh mục**: Học phần, Niên khóa, Khối kiến thức
+-   **Quản lý danh mục**: Học phần, Niên khóa, Khối kiến thức, Bậc học, Loại hình đào tạo, Khoá học
 -   **Xây dựng CTĐT**: Tạo, chỉnh sửa, sao chép, gửi phê duyệt chương trình
 -   **Phân quyền RBAC**: 4 vai trò (Admin, Khoa, Giảng viên, Sinh viên)
 -   **Giới hạn dữ liệu**: Khoa chỉ thấy dữ liệu của khoa mình (Row-level security)
