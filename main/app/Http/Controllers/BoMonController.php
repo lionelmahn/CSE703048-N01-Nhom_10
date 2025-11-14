@@ -25,7 +25,6 @@ class BoMonController extends Controller
     {
         $boMon = BoMon::create($request->validated());
 
-        // Activity logging removed
 
         return redirect()->route('bo-mon.show', $boMon)->with('success', 'Tạo bộ môn thành công');
     }
@@ -46,16 +45,12 @@ class BoMonController extends Controller
     {
         $boMon->update($request->validated());
 
-        // Activity logging removed
-
         return redirect()->route('bo-mon.show', $boMon)->with('success', 'Cập nhật bộ môn thành công');
     }
 
     public function destroy(BoMon $boMon)
     {
         $boMon->delete();
-
-        // Activity logging removed
 
         return redirect()->route('bo-mon.index')->with('success', 'Xóa bộ môn thành công');
     }
