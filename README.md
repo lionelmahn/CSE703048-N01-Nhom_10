@@ -23,6 +23,59 @@
 | Nguyễn Văn Mạnh   | 23010559     | 23010559@st.phenikaa-uni.edu.vn             |
 
 ---
+## Cài Đặt
+
+### 1. Clone hoặc tải mã nguồn
+
+```bash
+git clone <repository-url> ctdt-management
+cd ctdt-management
+```
+
+### 2. Cài đặt Composer dependencies
+
+```bash
+composer install
+```
+
+### 3. Cấu hình môi trường
+
+```bash
+cp .env.example .env
+php artisan key:generate
+```
+
+### 4. Cấu hình database trong `.env`
+
+```
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=ctdt_management
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+### 5. Chạy migrations và seeders
+
+```bash
+php artisan migrate --seed
+```
+
+### 6. Cài đặt npm dependencies (cho Breeze auth UI)
+
+```bash
+npm install && npm run build
+```
+
+### 7. Khởi động server
+
+```bash
+php artisan serve
+```
+
+Truy cập: **http://localhost:8000**
+
 ## 🔐 Tài khoản DEMO
 
 Dùng để đăng nhập và trải nghiệm hệ thống.
