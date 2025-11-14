@@ -1,14 +1,16 @@
 # CSE703048-1-1-25-N01-Nhom_10
+
 <br>
+
 # 🎓 BÁO CÁO BÀI TẬP LỚN  
+
 <br>
+
 ## MÔN HỌC: PHÂN TÍCH VÀ THIẾT KẾ PHẦN MỀM  
 ### **ĐỀ TÀI: PHÁT TRIỂN PHẦN MỀM QUẢN LÝ CHƯƠNG TRÌNH ĐÀO TẠO**
 
 ---
-<br>
 ## 🏫 Thông tin học phần
-<br>
 - **Môn học:** Phân tích và Thiết kế Phần mềm (N01)  
 - **Tên đề tài:** Phát triển phần mềm Quản lý Chương trình Đào tạo  
 - **Nhóm:** 10  
