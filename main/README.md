@@ -95,3 +95,4 @@ Truy cập: **http://localhost:8000**
 | **Khoa**       | CRUD CTĐT của khoa mình, quản lý học phần khoa       |
 | **Giảng viên** | Xem CTĐT/học phần (read-only)                        |
 | **Sinh viên**  | Xem CTĐT published (read-only)                       |
+
