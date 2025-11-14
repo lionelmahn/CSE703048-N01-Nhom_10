@@ -1,6 +1,6 @@
 # 🎓 BÁO CÁO BÀI TẬP LỚN  
 ## MÔN HỌC: PHÂN TÍCH VÀ THIẾT KẾ PHẦN MỀM  
-### **Đề tài: PHÁT TRIỂN PHẦN MỀM QUẢN LÝ CHƯƠNG TRÌNH ĐÀO TẠO**
+### **ĐỀ TÀI: PHÁT TRIỂN PHẦN MỀM QUẢN LÝ CHƯƠNG TRÌNH ĐÀO TẠO**
 
 ---
 
