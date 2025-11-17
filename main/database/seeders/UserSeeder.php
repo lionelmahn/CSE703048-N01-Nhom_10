@@ -10,13 +10,13 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-
         // Admin user (Phòng đào tạo)
         User::create([
             'name' => 'Admin Demo',
             'email' => 'admin@example.com',
             'password' => Hash::make('password'),
             'role' => 'admin',
+            'active' => true,
             'email_verified_at' => now(),
         ]);
 
@@ -27,6 +27,7 @@ class UserSeeder extends Seeder
             'password' => Hash::make('password'),
             'role' => 'khoa',
             'khoa_id' => 1, // Khoa Công Nghệ Thông Tin
+            'active' => true,
             'email_verified_at' => now(),
         ]);
 
@@ -36,6 +37,7 @@ class UserSeeder extends Seeder
             'password' => Hash::make('password'),
             'role' => 'khoa',
             'khoa_id' => 2, // Khoa Kinh Tế
+            'active' => true,
             'email_verified_at' => now(),
         ]);
 
@@ -46,6 +48,7 @@ class UserSeeder extends Seeder
             'password' => Hash::make('password'),
             'role' => 'giang_vien',
             'khoa_id' => 1, // Khoa CNTT (Bộ môn Công Nghệ Phần Mềm thuộc Khoa CNTT)
+            'active' => true,
             'email_verified_at' => now(),
         ]);
 
@@ -55,6 +58,7 @@ class UserSeeder extends Seeder
             'password' => Hash::make('password'),
             'role' => 'giang_vien',
             'khoa_id' => 1, // Khoa CNTT (Bộ môn Khoa Học Máy Tính thuộc Khoa CNTT)
+            'active' => true,
             'email_verified_at' => now(),
         ]);
 
@@ -64,6 +68,7 @@ class UserSeeder extends Seeder
             'password' => Hash::make('password'),
             'role' => 'giang_vien',
             'khoa_id' => 3, // Khoa Kỹ Thuật Điện Tử và Viễn Thông
+            'active' => true,
             'email_verified_at' => now(),
         ]);
 
@@ -73,6 +78,7 @@ class UserSeeder extends Seeder
             'email' => 'sv1@example.com',
             'password' => Hash::make('password'),
             'role' => 'sinh_vien',
+            'active' => true,
             'email_verified_at' => now(),
         ]);
 
@@ -81,6 +87,7 @@ class UserSeeder extends Seeder
             'email' => 'sv2@example.com',
             'password' => Hash::make('password'),
             'role' => 'sinh_vien',
+            'active' => true,
             'email_verified_at' => now(),
         ]);
 
@@ -89,6 +96,17 @@ class UserSeeder extends Seeder
             'email' => 'sv3@example.com',
             'password' => Hash::make('password'),
             'role' => 'sinh_vien',
+            'active' => true,
+            'email_verified_at' => now(),
+        ]);
+
+        User::create([
+            'name' => 'User Bị Khóa',
+            'email' => 'locked@example.com',
+            'password' => Hash::make('password'),
+            'role' => 'giang_vien',
+            'khoa_id' => 1,
+            'active' => false,
             'email_verified_at' => now(),
         ]);
     }

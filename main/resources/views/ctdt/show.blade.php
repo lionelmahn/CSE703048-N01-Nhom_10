@@ -354,7 +354,7 @@
                 </div>
                 <div class="mb-3">
                     <small class="text-muted d-block">Hiệu lực từ</small>
-                    <p class="mb-0">{{ $ctdt->hieu_luc_tu->format('d/m/Y') }}</p>
+                    <p class="mb-0">{{ $ctdt->hieu_luc_tu ? $ctdt->hieu_luc_tu->format('d/m/Y') : 'N/A' }}</p>
                 </div>
                 <div class="mb-3">
                     <small class="text-muted d-block">Hiệu lực đến</small>

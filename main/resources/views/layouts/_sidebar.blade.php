@@ -119,12 +119,12 @@
         @endif
         
         <hr class="my-2">
-        <h6 class="text-muted text-uppercase fw-bold mb-3" style="font-size: 12px;">Công cộng</h6>
+        <h6 class="text-muted text-uppercase fw-bold mb-3" style="font-size: 12px;">Cài đặt hệ thống</h6>
         
-        <div class="nav-item @if(request()->routeIs('ctdt-public.*')) active @endif">
+        {{-- <div class="nav-item @if(request()->routeIs('ctdt-public.*')) active @endif">
             <a href="{{ route('ctdt-public.index') }}">
                 <i class="fas fa-eye"></i> CTĐT công khai
             </a>
-        </div>
+        </div> --}}
     </div>
 </nav>

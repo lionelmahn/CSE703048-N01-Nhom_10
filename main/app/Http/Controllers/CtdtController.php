@@ -254,7 +254,7 @@ class CtdtController extends Controller
             return $item->hocPhan->so_tinchi;
         });
 
-        $minTinChi = 120; // Có thể config theo bậc học
+        $minTinChi = 20; // Có thể config theo bậc học
         if ($tongTinChi < $minTinChi) {
             return back()->with('error', "Không thể gửi: Tổng tín chỉ ($tongTinChi) chưa đạt mức tối thiểu ($minTinChi).");
         }
