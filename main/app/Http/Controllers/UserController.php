@@ -91,7 +91,7 @@ class UserController extends Controller
     {
         $this->authorize('update', $user);
 
-        // Prevent locking own account
+        
         if ($user->id === auth()->id()) {
             return response()->json([
                 'success' => false,

@@ -60,7 +60,6 @@ class KhoaController extends Controller
 
         return redirect()->route('khoa.show', $khoa)->with('success', 'Cập nhật khoa thành công');
     }
-
     public function destroy(Khoa $khoa)
     {
         $khoa->delete();
